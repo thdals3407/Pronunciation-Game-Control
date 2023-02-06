@@ -28,6 +28,8 @@ import sys
 import pygame
 from pygame.locals import *
 
+import pyautogui
+import gspeech
 
 class joystick_handler(object):
     def __init__(self, id):
@@ -161,11 +163,134 @@ class input_test(object):
         ) * self.joycount
         self.resolution = (rec_width, rec_height)
 
+        self.overValue = 0.8
+        self.stick_0_left = "left"
+        self.stick_0_right = "right"
+        self.stick_0_up = "up"
+        self.stick_0_down = "down"
+        self.current_vector = [False, False, False, False]
+        self.stick_1_left = ""
+        self.stick_1_right = ""
+        self.stick_1_up = ""
+        self.stick_1_down = ""
+
+        self.left_hat = ""
+        self.right_hat = ""
+        self.up_hat = ""
+        self.down_hat = ""
+
+        self.buttonMappingList = ["r", "space", "", "q", "w", "", "", "", "", "", "", "", "", "", "", ""]
+
+
+    def Axis_Setting(self, type, left, right, up, down):
+        if type == 0:
+            self.stick_0_left = left
+            self.stick_0_right = right
+            self.stick_0_up = up
+            self.stick_0_down = down
+        elif type == 1:
+            self.stick_1_left = left
+            self.stick_1_right = right
+            self.stick_1_up = up
+            self.stick_1_down = down
+
+
+    def Hat_Setting(self, points, key):
+        if points == (-1, 0):
+            self.left_hat = key
+        elif points == (1, 0):
+            self.right_hat = key
+        elif points == (0, 1):
+            self.up_hat = key
+        elif points == (0, -1):
+            self.down_hat = key
+        else:
+            print("That point is not matched")
+    def Button_Setting(self, n, key):
+        if n < 16:
+            self.buttonMappingList[n] = key
+        else:
+            print("Index out of range, The max index is 15")
+
+    def keyBoardPress(self, word):
+        if word != "":
+            pyautogui.press(word)
+    def keyUpdown(self, word, updown):
+        if word != "":
+            if updown:
+                pyautogui.keyDown(word)
+            else:
+                pyautogui.keyUp(word)
+    def Axis_Mapping(self, n, value):
+        if n == 0:
+            if value < -self.overValue and not self.current_vector[0]:
+                self.current_vector[0] = True
+                self.keyUpdown(self.stick_0_left, True)
+            elif value > self.overValue and not self.current_vector[1]:
+                self.current_vector[1] = True
+                self.keyUpdown(self.stick_0_right, True)
+            else:
+                if self.current_vector[0]:
+                    self.current_vector[0] = False
+                    self.keyUpdown(self.stick_0_left, False)
+                if self.current_vector[1]:
+                    self.current_vector[1] = False
+                    self.keyUpdown(self.stick_0_right, False)
+        elif n == 1:
+            if value < -self.overValue and not self.current_vector[2]:
+                self.current_vector[2] = True
+                self.keyUpdown(self.stick_0_up, True)
+            elif value > self.overValue and not self.current_vector[3]:
+                self.current_vector[3] = True
+                self.keyUpdown(self.stick_0_down, True)
+            else:
+                if self.current_vector[2]:
+                    self.current_vector[2] = False
+                    self.keyUpdown(self.stick_0_up, False)
+                if self.current_vector[3]:
+                    self.current_vector[3] = False
+                    self.keyUpdown(self.stick_0_down, False)
+            #else:
+            #    self.keyUpdown(self.stick_0_up, False)
+            #    self.keyUpdown(self.stick_0_down, False)
+        """
+        elif n == 3:
+            if value < -self.overValue:
+                self.keyUpdown(self.stick_1_left, True)
+            elif value > self.overValue:
+                self.keyUpdown(self.stick_1_right, True)
+            else:
+                self.keyUpdown(self.stick_1_left, False)
+                self.keyUpdown(self.stick_1_right, False)
+        elif n == 4:
+            if value < -self.overValue:
+                self.keyUpdown(self.stick_1_up, True)
+            elif value > self.overValue:
+                self.keyUpdown(self.stick_1_down, True)
+            else:
+                self.keyUpdown(self.stick_1_up, False)
+                self.keyUpdown(self.stick_1_down, False)
+        """
+    def Hat_Mapping(self, points):
+        if points[0] == -1:
+            self.keyBoardPress(self.left_hat)
+        elif points[0] == 1:
+            self.keyBoardPress(self.right_hat)
+        elif points[1] == -1:
+            self.keyBoardPress(self.up_hat)
+        elif points[1] == 1:
+            self.keyBoardPress(self.down_hat)
+
+    def Button_Mapping(self, n):
+        if n < 16:
+            self.keyBoardPress(self.buttonMappingList[n])
+
+
     def run(self):
         self.screen = pygame.display.set_mode(self.resolution, RESIZABLE)
         pygame.display.set_caption(self.program.nameversion)
         self.circle.convert()
-
+        self.gsp = gspeech.Gspeech()
         while True:
             for i in range(self.joycount):
                 self.draw_joy(i)
@@ -195,14 +320,21 @@ class input_test(object):
                     self.screen = pygame.display.set_mode(event.size, RESIZABLE)
                 elif event.type == JOYAXISMOTION:
                     self.joy[event.joy].axis[event.axis] = event.value
+                    self.Axis_Mapping(event.axis, event.value)
+                    print("Joystick mapping : ", event.axis, event.value)
                 elif event.type == JOYBALLMOTION:
                     self.joy[event.joy].ball[event.ball] = event.rel
                 elif event.type == JOYHATMOTION:
                     self.joy[event.joy].hat[event.hat] = event.value
+                    self.Hat_Mapping(event.value)
+                    print("Hat mapping      : ", event.value)
                 elif event.type == JOYBUTTONUP:
                     self.joy[event.joy].button[event.button] = 0
+                    #print("JOYBUTTONUP", event.button)
                 elif event.type == JOYBUTTONDOWN:
                     self.joy[event.joy].button[event.button] = 1
+                    self.Button_Mapping(event.button)
+                    print("Button mapping   : ", event.button)
 
     def rendertextline(self, text, pos, color, linenumber=0):
         self.screen.blit(

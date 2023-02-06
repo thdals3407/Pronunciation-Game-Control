@@ -1,16 +1,19 @@
-# -*- coding: utf-8 -*-
+
 import gspeech
-import time
 import pyautogui
 from tkinter import *
-import threading
+from multiprocessing import Process
+from joysticController import input_test
+import time
 
-def main():
-    target_word = "가"
-    target_key = "a"
-    gsp = gspeech.Gspeech()
+target_word = "가"
+target_key = "a"
+
+
+def STT_Speech():
+    #gsp = gspeech.Gspeech()
     print("STT code Start")
-    while True:
+"""    while True:
         # 음성 인식 될때까지 대기 한다.
         stt = gsp.getText()
         if stt is None:
@@ -18,10 +21,9 @@ def main():
         print(stt)
         if SamepleTextInChecker(stt, target_word):
             pyautogui.press([target_key])
-        time.sleep(0.001)
-        if ('끝내자' in stt):
-            break
-
+        #time.sleep(0.001)
+        if ('끝' in stt):
+            break"""
 
 def SamepleTextInChecker(stt, target_word):
     text_length = len(target_word)
@@ -34,5 +36,17 @@ def SamepleTextInChecker(stt, target_word):
     else:
         return False
 
+def TMP_key_setting():
+    program.Axis_Setting(0, "a")
+
+def Joystic_controller():
+    program = input_test()
+    program.init()
+    program.run()  # This function should never return
+
 if __name__ == '__main__':
-    main()
+    p0 = Process(target=STT_Speech)
+    p1 = Process(target=Joystic_controller)
+    p0.start()
+    p1.start()
+    print("main Process is done")

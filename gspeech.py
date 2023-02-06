@@ -25,6 +25,7 @@ import pyaudio
 from six.moves import queue
 from threading import Thread
 import time
+import pyautogui
 
 # Audio recording parameters
 RATE = 16000
