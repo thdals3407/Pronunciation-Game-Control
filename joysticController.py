@@ -28,7 +28,7 @@ import sys
 import pygame
 from pygame.locals import *
 
-import pyautogui
+import pydirectinput
 import gspeech
 
 class joystick_handler(object):
@@ -179,20 +179,21 @@ class input_test(object):
         self.up_hat = ""
         self.down_hat = ""
 
-        self.buttonMappingList = ["r", "space", "", "q", "w", "", "", "", "", "", "", "", "", "", "", ""]
+        self.buttonMappingList = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
 
 
-    def Axis_Setting(self, type, left, right, up, down):
+    def Axis_Setting(self, type, list):
+        print("Axis Change :", type, list)
         if type == 0:
-            self.stick_0_left = left
-            self.stick_0_right = right
-            self.stick_0_up = up
-            self.stick_0_down = down
+            self.stick_0_left = list[0]
+            self.stick_0_right = list[1]
+            self.stick_0_up = list[2]
+            self.stick_0_down = list[3]
         elif type == 1:
-            self.stick_1_left = left
-            self.stick_1_right = right
-            self.stick_1_up = up
-            self.stick_1_down = down
+            self.stick_1_left = list[0]
+            self.stick_1_right = list[1]
+            self.stick_1_up = list[2]
+            self.stick_1_down = list[3]
 
 
     def Hat_Setting(self, points, key):
@@ -212,15 +213,29 @@ class input_test(object):
         else:
             print("Index out of range, The max index is 15")
 
+
+
+    def Button_Setting_Inst(self, list):
+        print("Button Change :", list)
+        self.buttonMappingList[0] = list[2]
+        self.buttonMappingList[1] = list[3]
+        self.buttonMappingList[2] = list[0]
+        self.buttonMappingList[3] = list[1]
+
+
+
     def keyBoardPress(self, word):
         if word != "":
-            pyautogui.press(word)
+            pydirectinput.press(word)
+            #time.sleep(0.01)
+            #pydirectinput.keyUp(word)
+            #pydirectinput.keyDown(word)
     def keyUpdown(self, word, updown):
         if word != "":
             if updown:
-                pyautogui.keyDown(word)
+                pydirectinput.keyDown(word)
             else:
-                pyautogui.keyUp(word)
+                pydirectinput.keyUp(word)
     def Axis_Mapping(self, n, value):
         if n == 0:
             if value < -self.overValue and not self.current_vector[0]:
@@ -321,20 +336,20 @@ class input_test(object):
                 elif event.type == JOYAXISMOTION:
                     self.joy[event.joy].axis[event.axis] = event.value
                     self.Axis_Mapping(event.axis, event.value)
-                    print("Joystick mapping : ", event.axis, event.value)
+                    #print("Joystick mapping : ", event.axis, event.value)
                 elif event.type == JOYBALLMOTION:
                     self.joy[event.joy].ball[event.ball] = event.rel
                 elif event.type == JOYHATMOTION:
                     self.joy[event.joy].hat[event.hat] = event.value
                     self.Hat_Mapping(event.value)
-                    print("Hat mapping      : ", event.value)
+                    #print("Hat mapping      : ", event.value)
                 elif event.type == JOYBUTTONUP:
                     self.joy[event.joy].button[event.button] = 0
                     #print("JOYBUTTONUP", event.button)
                 elif event.type == JOYBUTTONDOWN:
                     self.joy[event.joy].button[event.button] = 1
                     self.Button_Mapping(event.button)
-                    print("Button mapping   : ", event.button)
+                    #print("Button mapping   : ", event.button)
 
     def rendertextline(self, text, pos, color, linenumber=0):
         self.screen.blit(

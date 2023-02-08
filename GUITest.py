@@ -2,7 +2,7 @@ from tkinter import *
 from multiprocessing import Process, Manager
 from joysticController import input_test
 import pydirectinput as pyd
-import gspeech2
+import gspeech
 import time
 
 target_word = ""
@@ -216,9 +216,9 @@ def parameter_checker():
 if __name__ == "__main__":
 
     GUI = GUIMaker()
-    GUI.set_initial_setting("가", "z", "a", "s", "", "x")
+    GUI.set_initial_setting("가", "d", "a", "s", "", "f")
     GUI.run()
     p1 = Process(target=Joystic_controller, args=(left_map, right_map, up_map, down_map, x_map, y_map, a_map, b_map))
-    p2 = Process(target=gspeech2.main, args=(target_word, target_key))
+    p2 = Process(target=STT_Speech, args=(target_word, target_key))
     p1.start()
     p2.start()
