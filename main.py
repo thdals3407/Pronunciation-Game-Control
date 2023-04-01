@@ -22,7 +22,7 @@ def main():
     max_frame_rate = 60
     dashboard = Dashboard("./img/font.png", 8, screen)
     sound = Sound()
-    #pstreaming =Pstreaming(model, "갸")
+    pstreaming =Pstreaming(model, "갸")
     level = Level(screen, sound, dashboard)
     menu = Menu(screen, dashboard, level, sound)
 
@@ -35,7 +35,7 @@ def main():
     pstreaming.sequence_streaming_setting()
     while not mario.restart:
         pygame.display.set_caption("Super Mario running with {:d} FPS".format(int(clock.get_fps())))
-        pstreaming.sequence_streaming()
+        #pstreaming.sequence_streaming()
         if mario.pause:
             mario.pauseObj.update()
         else:
@@ -48,10 +48,10 @@ def main():
 
 
 if __name__ == "__main__":
-    pstreaming = Pstreaming(model, "갸")
+    #pstreaming = Pstreaming(model, "갸")
     #p1 = Process(target=pstreaming.streaming_start)
-    #exitmessage = 'restart'
     #p1.start()
+    exitmessage = 'restart'
     while exitmessage == 'restart':
         print("Game Start")
         exitmessage = main()
