@@ -10,7 +10,6 @@ import time
 
 Thread_parameter = 0.5
 model = read_recognizer('latest')
-emit_this = 1.2
 
 def Stt_ipa(wav_path):
     print("Wav File : ")
@@ -25,7 +24,7 @@ def test_code():
     for i in range(1, 8):
         Stt_ipa("Sample" + str(i) + ".wav")
 
-class AudioRecorder:
+class Pstreaming:
     def __init__(self, model, target_word, threshold=0.5, filename='AudioSample/output.wav', format=pyaudio.paInt16, channels=1, rate=16000, frames_per_buffer=2048):
         self.threshold = threshold
         self.filename = filename
@@ -36,7 +35,7 @@ class AudioRecorder:
         self.audio = pyaudio.PyAudio()
         self.model = model
         self.target_word = target_word
-
+        self.running = False
     def set_target_word(self, target_word):
         self.target_word = target_word
         print("target_word ", self.target_word)
@@ -69,29 +68,29 @@ class AudioRecorder:
             data = self.stream.read(self.frames_per_buffer)
             self.frames.append(data)
 
-    def streaming_start(self):
-        self.stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate, input=True,
-                                      frames_per_buffer=self.frames_per_buffer)
-        self.data = self.stream.read(4000)
-        self.model.streaming_setting(self.channels, self.rate, len(self.data), self.audio.get_sample_size(self.format))
-        self.over_check = 2
-        self.text = ""
-        print("Start Streaming")
-        while True:
-            self.data = self.stream.read(4000)
-            self.ipa = self.model.recognize_Streaming(self.data, lang_id="kor")
-            if self.ipa != "":
-                self.text += self.ipa
-            else:
-                if self.over_check < 0:
-                    if self.text != "":
-                        print("all ", self.text)
-                        self.text = ""
-                        self.over_check = 2
-                else:
-                    self.over_check -= 1
+    # def streaming_start2(self):
+    #     self.stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate, input=True,
+    #                                   frames_per_buffer=self.frames_per_buffer)
+    #     self.data = self.stream.read(4000)
+    #     self.model.streaming_setting(self.channels, self.rate, len(self.data), self.audio.get_sample_size(self.format))
+    #     self.over_check = 2
+    #     self.text = ""
+    #     print("Start Streaming")
+    #     while True:
+    #         self.data = self.stream.read(4000)
+    #         self.ipa = self.model.recognize_Streaming(self.data, lang_id="kor")
+    #         if self.ipa != "":
+    #             self.text += self.ipa
+    #         else:
+    #             if self.over_check < 0:
+    #                 if self.text != "":
+    #                     print("all ", self.text)
+    #                     self.text = ""
+    #                     self.over_check = 2
+    #             else:
+    #                 self.over_check -= 1
 
-    def gop_streaming_start(self):
+    def streaming_start(self):
         self.stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate, input=True,
                                       frames_per_buffer=self.frames_per_buffer)
         self.data = self.stream.read(3000)
@@ -100,11 +99,12 @@ class AudioRecorder:
         self.text = ""
         self.score = 0
         self.gop_List = []
+        self.running = True
         print("Start Streaming")
         self.ipa_target_word = korean_to_ipa(self.target_word)
-        while True:
+        while self.running:
             self.data = self.stream.read(3000)
-            self.ipa = self.model.recognize_Streaming(self.data, lang_id="kor", topk=10, emit=emit_this)
+            self.ipa = self.model.recognize_Streaming(self.data, lang_id="kor", topk=10, emit=1.1)
             if self.ipa != "":
                 self.text += self.ipa
             else:
@@ -124,9 +124,48 @@ class AudioRecorder:
                         self.over_check = 3
                 else:
                     self.over_check -= 1
-            if keyboard.is_pressed("9"):
-                self.Mgop_Scoring()
-                break
+
+    def sequence_streaming_setting(self):
+        self.stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate, input=True,
+                                      frames_per_buffer=self.frames_per_buffer)
+        self.data = self.stream.read(3000)
+        self.model.streaming_setting(self.channels, self.rate, len(self.data), self.audio.get_sample_size(self.format))
+        self.over_check = 1
+        self.text = ""
+        self.score = 0
+        self.gop_List = []
+        self.running = True
+        print("Start Streaming")
+        self.ipa_target_word = korean_to_ipa(self.target_word)
+
+
+    def sequence_streaming(self):
+        self.data = self.stream.read(3000)
+        self.ipa = self.model.recognize_Streaming(self.data, lang_id="kor", topk=10, emit=1.1)
+        if self.ipa != "":
+            self.text += self.ipa
+        else:
+            if self.text != "":
+                self.score = self.goP_Calculater(self.text, self.ipa_target_word)
+                self.gop_score_check(self.score)
+            # if self.text != "":
+            #     self.score = GoP_Calculater(self.text, self.ipa_target_word)
+            #     print("target_word :", target_word, "-- Gop_Score :",self.score)
+            #     self.gop_List.append(self.score)
+            # self.text = ""
+            if self.over_check < 0:
+                if self.text != "":
+                    print("target_word :", self.target_word, "-- Gop_Score :", self.score)
+                    self.gop_List.append(self.score)
+                    self.text = ""
+                    self.over_check = 3
+            else:
+                self.over_check -= 1
+
+
+    def streaming_stop(self):
+        self.running = False
+        self.Mgop_Scoring()
 
     def goP_Calculater(self, input_ipa, target_ipa):
         score = 0.0
@@ -166,18 +205,12 @@ class AudioRecorder:
             if i > threshold:
                 count += 1
         return count / len(score_array)
-    def delay_maker(self):
-        while True:
-            if keyboard.is_pressed("8"):
-                break
-            time.sleep(0.1)
-            print("delay check")
+
 if __name__ == '__main__':
     #test_code()
-    recorder = AudioRecorder(model, "점프")
+    recorder = Pstreaming(model, "점프")
     #recorder.start()1
     #recorder.stop()
     #recorder.streaming_start(model)
     while True:
-        recorder.delay_maker()
-        recorder.gop_streaming_start()
+        recorder.streaming_start()

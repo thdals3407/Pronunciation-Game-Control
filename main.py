@@ -8,10 +8,11 @@ import pydirectinput
 import time
 windowSize = 640, 480
 
-#from multiprocessing import Process
+from multiprocessing import Process
 
-from Streaming_code import AudioRecorder
+from Streaming_code import Pstreaming
 from allosaurus.app import read_recognizer
+model = read_recognizer('latest')
 windowSize = 640, 480
 
 def main():
@@ -21,6 +22,7 @@ def main():
     max_frame_rate = 60
     dashboard = Dashboard("./img/font.png", 8, screen)
     sound = Sound()
+    #pstreaming =Pstreaming(model, "갸")
     level = Level(screen, sound, dashboard)
     menu = Menu(screen, dashboard, level, sound)
 
@@ -30,9 +32,10 @@ def main():
     mario = Mario(0, 0, level, screen, dashboard, sound)
     print("setting Print : ", level, screen, dashboard, sound)
     clock = pygame.time.Clock()
-
+    pstreaming.sequence_streaming_setting()
     while not mario.restart:
         pygame.display.set_caption("Super Mario running with {:d} FPS".format(int(clock.get_fps())))
+        pstreaming.sequence_streaming()
         if mario.pause:
             mario.pauseObj.update()
         else:
@@ -41,27 +44,29 @@ def main():
             mario.update()
         pygame.display.update()
         clock.tick(max_frame_rate)
-
-    pydirectinput.keyDown("9")
-    time.sleep(0.5)
-    pydirectinput.keyUp("9")
     return 'restart'
 
 
 if __name__ == "__main__":
-    exitmessage = 'restart'
+    pstreaming = Pstreaming(model, "갸")
+    #p1 = Process(target=pstreaming.streaming_start)
+    #exitmessage = 'restart'
+    #p1.start()
     while exitmessage == 'restart':
-        print("test1")
-        pydirectinput.keyDown("8")
-        time.sleep(0.5)
-        pydirectinput.keyUp("8")
+        print("Game Start")
         exitmessage = main()
 
-    #exitmessage = 'restart'
-    #model = read_recognizer('latest')
-    #recorder = AudioRecorder()
-    #main()
-    #p1 = Process(target=recorder.gop_streaming_start, args=(model, "마이크"))
-    #p2 = Process(target=main)
-    #p2.start()
-    #p1.start()
+# pstreaming = Pstreaming(model, "갸")
+# p1 = Process(target=pstreaming.streaming_start())
+# exitmessage = 'restart'
+# p1.start()
+
+
+#exitmessage = 'restart'
+#model = read_recognizer('latest')
+#pstreaming =Pstreaming(model, "갸")
+#main()
+#p1 = Process(target=pstreaming.streaming_start, args=(model, "마이크"))
+#p2 = Process(target=main)
+#p1.start()
+#p2.start()

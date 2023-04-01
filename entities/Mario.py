@@ -148,11 +148,13 @@ class Mario(EntityBase):
             ent.active = False
             ent.bouncing = False
         self.dashboard.points += 100
+        print("Kill Entity")
 
     def gameOver(self):
         srf = pygame.Surface((640, 480))
         srf.set_colorkey((255, 255, 255), pygame.RLEACCEL)
         srf.set_alpha(128)
+        print("GameOver ---- User Score :", self.dashboard.points)
         self.sound.music_channel.stop()
         self.sound.music_channel.play(self.sound.death)
 
@@ -173,6 +175,7 @@ class Mario(EntityBase):
         self.restart = True
 
     def getPos(self):
+        print("User Position -- x : ", self.rect.x, ", y : ", self.rect.y)
         return self.camera.x + self.rect.x, self.rect.y
 
     def setPos(self, x, y):

@@ -24,8 +24,7 @@ class Input:
         else:
             self.entity.traits['goTrait'].direction = 0
 
-        isJumping = pressedKeys[K_p]
-        if isJumping: print("is Jumping")
+        isJumping = pressedKeys[K_1]
         self.entity.traits['jumpTrait'].jump(isJumping)
 
         self.entity.traits['goTrait'].boost = pressedKeys[K_LSHIFT]
