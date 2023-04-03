@@ -1,6 +1,6 @@
 from tkinter import *
-from multiprocessing import Process, Manager
-from joysticController import input_test
+from multiprocessing import Process
+from TestCode.joysticController import input_test
 import pydirectinput as pyd
 import gspeech
 import time

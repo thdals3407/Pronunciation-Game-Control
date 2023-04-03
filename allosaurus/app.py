@@ -96,7 +96,6 @@ class Recognizer:
 
     def recognize_Streaming(self, data, lang_id='kor', topk=1, emit=1.0, timestamp=False, channel=0, header_only=False):
         # recognize a single file
-
         audio = Audio()
         # set stream basic info
         channel_number = self.channel_number

@@ -1,28 +1,36 @@
+import pyaudio
 import pygame
 from classes.Dashboard import Dashboard
 from classes.Level import Level
 from classes.Menu import Menu
 from classes.Sound import Sound
 from entities.Mario import Mario
-import pydirectinput
-import time
+from multiprocessing import Process, Queue
+
+
 windowSize = 640, 480
 
-from multiprocessing import Process
+audio = pyaudio.PyAudio()
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 16000
+CHUNK = 1024
+audio_queue = Queue()
 
-from Streaming_code import Pstreaming
-from allosaurus.app import read_recognizer
-model = read_recognizer('latest')
-windowSize = 640, 480
+stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
 
-def main():
+def get_audio(audio_queue):
+    while True:
+        data = stream.read(CHUNK)
+        audio_queue.put(data)
+
+def main(audio_queue):
     pygame.mixer.pre_init(44100, -16, 2, 4096)
     pygame.init()
     screen = pygame.display.set_mode(windowSize)
     max_frame_rate = 60
     dashboard = Dashboard("./img/font.png", 8, screen)
     sound = Sound()
-    #pstreaming =Pstreaming(model, "갸")
     level = Level(screen, sound, dashboard)
     menu = Menu(screen, dashboard, level, sound)
 
@@ -32,41 +40,32 @@ def main():
     mario = Mario(0, 0, level, screen, dashboard, sound)
     print("setting Print : ", level, screen, dashboard, sound)
     clock = pygame.time.Clock()
-    pstreaming.sequence_streaming_setting()
     while not mario.restart:
         pygame.display.set_caption("Super Mario running with {:d} FPS".format(int(clock.get_fps())))
-        pstreaming.sequence_streaming()
         if mario.pause:
             mario.pauseObj.update()
         else:
             level.drawLevel(mario.camera)
             dashboard.update()
             mario.update()
+        if not audio_queue.empty():
+            data = audio_queue.get()
+            print(data)
         pygame.display.update()
         clock.tick(max_frame_rate)
     return 'restart'
 
 
 if __name__ == "__main__":
-    pstreaming = Pstreaming(model, "갸")
-    #p1 = Process(target=pstreaming.streaming_start)
-    #exitmessage = 'restart'
-    #p1.start()
+    audio_process = Process(target=get_audio, args=(audio_queue,))
+    audio_process.start()
+    exitmessage = 'restart'
     while exitmessage == 'restart':
         print("Game Start")
-        exitmessage = main()
+        exitmessage = main(audio_queue)
 
-# pstreaming = Pstreaming(model, "갸")
-# p1 = Process(target=pstreaming.streaming_start())
-# exitmessage = 'restart'
-# p1.start()
-
-
-#exitmessage = 'restart'
-#model = read_recognizer('latest')
-#pstreaming =Pstreaming(model, "갸")
-#main()
-#p1 = Process(target=pstreaming.streaming_start, args=(model, "마이크"))
-#p2 = Process(target=main)
-#p1.start()
-#p2.start()
+    pygame.quit()
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+    audio_process.join()
