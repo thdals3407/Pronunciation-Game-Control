@@ -23,9 +23,10 @@ CHUNK = 1024
 audio_queue = Queue()
 stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
 model = read_recognizer('latest')
-
 target_word = '테스트'
 threshold = 0.3
+
+
 
 def get_audio(audio_queue):
     while True:
