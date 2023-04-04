@@ -1,157 +1,24 @@
-from allosaurus.app import read_recognizer
-import pyaudio
-import wave
-from util.KoreanTool import ipa_to_korean, korean_to_ipa
-import pydirectinput
-import numpy as np
-import time
-# load your model
+from util.IPATool import korean_to_ipa
 
-Thread_parameter = 0.5
-model = read_recognizer('latest')
+class GoPScoring:
+    def __init__(self, target_word):
+        self.target_word = target_word
+        self.target_ipa = korean_to_ipa(target_word)
 
-class Pstreaming:
-    def __init__(self, target_ipa, threshold=0.5):
-        self.target_ipa = target_ipa
-        self.threshold = threshold
     def set_target_word(self, target_word):
         self.target_word = target_word
-        print("target_word ", self.target_word)
-
-    def set_Thread(self, threshold):
-        self.threshold = threshold
-        print("Setting the intitial threshold : ", self.threshold)
-
-    def start(self):
-        print("recording Start")
-        self.stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate, input=True,
-                                      frames_per_buffer=self.frames_per_buffer)
-        self.frames = []
-
-    def stop(self):
-        print("recording Stop")
-        self.stream.stop_stream()
-        self.stream.close()
-        self.audio.terminate()
-        waveFile = wave.open(self.filename, 'wb')
-        waveFile.setnchannels(self.channels)
-        waveFile.setsampwidth(self.audio.get_sample_size(self.format))
-        waveFile.setframerate(self.rate)
-        waveFile.writeframes(b''.join(self.frames))
-        waveFile.close()
-        Stt_ipa("AudioSample/output.wav")
-
-    def record(self, duration):
-        for i in range(int(self.rate / self.frames_per_buffer * duration)):
-            data = self.stream.read(self.frames_per_buffer)
-            self.frames.append(data)
-
-    def streaming_start(self):
-        self.stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate, input=True,
-                                      frames_per_buffer=self.frames_per_buffer)
-        self.data = self.stream.read(3000)
-        self.model.streaming_setting(self.channels, self.rate, len(self.data), self.audio.get_sample_size(self.format))
-        self.over_check = 1
-        self.text = ""
-        self.score = 0
-        self.gop_List = []
-        self.running = True
-        print("Start Streaming")
-        self.ipa_target_word = korean_to_ipa(self.target_word)
-        while self.running:
-            self.data = self.stream.read(3000)
-            self.ipa = self.model.recognize_Streaming(self.data, lang_id="kor", topk=10, emit=1.1)
-            if self.ipa != "":
-                self.text += self.ipa
-            else:
-                if self.text != "":
-                    self.score = self.goP_Calculater(self.text, self.ipa_target_word)
-                    self.gop_score_check(self.score)
-                # if self.text != "":
-                #     self.score = GoP_Calculater(self.text, self.ipa_target_word)
-                #     print("target_word :", target_word, "-- Gop_Score :",self.score)
-                #     self.gop_List.append(self.score)
-                # self.text = ""
-                if self.over_check < 0:
-                    if self.text != "":
-                        print("target_word :", self.target_word, "-- Gop_Score :", self.score)
-                        self.gop_List.append(self.score)
-                        self.text = ""
-                        self.over_check = 3
-                else:
-                    self.over_check -= 1
-
-    def sequence_streaming_setting(self):
-        self.stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate, input=True,
-                                      frames_per_buffer=self.frames_per_buffer)
-        self.data = self.stream.read(3000)
-        self.model.streaming_setting(self.channels, self.rate, len(self.data), self.audio.get_sample_size(self.format))
-        self.over_check = 1
-        self.text = ""
-        self.score = 0
-        self.gop_List = []
-        self.running = True
-        print("Start Streaming")
-        self.ipa_target_word = korean_to_ipa(self.target_word)
-
-
-    def sequence_streaming(self):
-        self.data = self.stream.read(3000)
-        self.ipa = self.model.recognize_Streaming(self.data, lang_id="kor", topk=10, emit=1.1)
-        if self.ipa != "":
-            self.text += self.ipa
-        else:
-            if self.text != "":
-                self.score = self.goP_Calculater(self.text, self.ipa_target_word)
-                self.gop_score_check(self.score)
-            # if self.text != "":
-            #     self.score = GoP_Calculater(self.text, self.ipa_target_word)
-            #     print("target_word :", target_word, "-- Gop_Score :",self.score)
-            #     self.gop_List.append(self.score)
-            # self.text = ""
-            if self.over_check < 0:
-                if self.text != "":
-                    print("target_word :", self.target_word, "-- Gop_Score :", self.score)
-                    self.gop_List.append(self.score)
-                    self.text = ""
-                    self.over_check = 3
-            else:
-                self.over_check -= 1
-
-
-    def streaming_stop(self):
-        self.running = False
-        self.Mgop_Scoring()
-
-    def goP_Calculater(self, input_ipa, target_ipa):
+        self.target_ipa = korean_to_ipa(target_word)
+    def get_target_word(self):
+        return self.target_word
+    def get_target_ipa(self):
+        return self.target_ipa
+    def GoP_Score1(self, input_ipa):
         score = 0.0
         tmp_ipa = input_ipa
-        for i in range(len(target_ipa)):
-            if target_ipa[i] != " ":
-                if target_ipa[i] in tmp_ipa:
-                    tmp_ipa = input_ipa[input_ipa.find(target_ipa[i]):]
+        for i in range(len(self.target_ipa)):
+            if self.target_ipa[i] != " ":
+                if self.target_ipa[i] in tmp_ipa:
+                    tmp_ipa = input_ipa[input_ipa.find(self.target_ipa[i]):]
                     score += float(tmp_ipa[tmp_ipa.find("(") + 1:tmp_ipa.find(")")])
-        return score
+        return score / len(self.target_ipa)
 
-    def gop_score_check(self, score):
-        if score > self.threshold:
-            pydirectinput.press(["p"])
-
-    def Mgop_Scoring(self):
-        self.streaming = False
-        self.score_array = np.array(self.gop_List)
-        if len(self.score_array) > 0:
-            self.score_acc = self.accuracy_caculater(self.score_array, self.threshold)
-            print(self.score_array)
-            print("Mean of GoP    :", np.mean(self.score_array))
-            print("Acc of Score   :", self.score_acc)
-            self.DPRA(self.score_acc)
-
-if __name__ == '__main__':
-    #test_code()
-    recorder = Pstreaming(model, "점프")
-    #recorder.start()1
-    #recorder.stop()
-    #recorder.streaming_start(model)
-    while True:
-        recorder.streaming_start()

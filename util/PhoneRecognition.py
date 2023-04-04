@@ -1,7 +1,7 @@
 from allosaurus.app import read_recognizer
 import pyaudio
 from util.IPATool import korean_to_ipa
-
+from util.ToolArray import Mic_device_detector
 class PhoneRecognition:
     def __init__(self, model, audio, format=pyaudio.paInt16, channels=1, rate=16000, frames_per_buffer=2048):
         self.model = model
@@ -22,7 +22,6 @@ class PhoneRecognition:
         self.threshold = threshold
         print("Setting threshold : ", self.threshold)
     def get_ipa(self, data):
-        self.over_check = 1
         self.text = ""
         self.ipa = self.model.recognize_Streaming(data, lang_id="kor", topk=10, emit=1.1)
         return self.ipa
@@ -34,17 +33,7 @@ if __name__ == '__main__':
     channels = 1
     rate = 16000
     frames_per_buffer = 1024
-    for index in range(audio.get_device_count()):
-        desc = audio.get_device_info_by_index(index)
-        device_list = []
-        index_list = []
-        if "마이크" in desc['name'] or "mic" in desc['name']:
-            device_list.append(desc['name'] )
-            index_list.append(index)
-    for i in range(len(index_list)):
-        print("DEVICE: {device}, INDEX: {index}".format(
-            device=device_list[i], index=index_list[i]))
-
+    device_list, index_list = Mic_device_detector(audio)
     stream = audio.open(format=format, channels=channels, rate=rate, input=True,
                                   frames_per_buffer=frames_per_buffer, input_device_index=0)
 

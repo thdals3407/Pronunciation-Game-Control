@@ -1,12 +1,17 @@
 import pyaudio
 import pygame
+
 from classes.Dashboard import Dashboard
 from classes.Level import Level
 from classes.Menu import Menu
 from classes.Sound import Sound
 from entities.Mario import Mario
-from multiprocessing import Process, Queue
 
+from multiprocessing import Process, Queue
+from allosaurus.app import read_recognizer
+from util.PhoneRecognition import PhoneRecognition
+from util.GoP import GoPScoring
+from util.DPRA import DPRA
 
 windowSize = 640, 480
 
@@ -16,8 +21,11 @@ CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
 audio_queue = Queue()
-
 stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+model = read_recognizer('latest')
+
+target_word = '테스트'
+threshold = 0.3
 
 def get_audio(audio_queue):
     while True:
@@ -34,11 +42,15 @@ def main(audio_queue):
     level = Level(screen, sound, dashboard)
     menu = Menu(screen, dashboard, level, sound)
 
+    recorder = PhoneRecognition(model, audio, format=pyaudio.paInt16, channels=CHANNELS, rate=RATE,
+                                frames_per_buffer=CHUNK)
+    gop = GoPScoring(target_word)
+    dpra = DPRA(threshold = threshold)
     while not menu.start:
         menu.update()
-
     mario = Mario(0, 0, level, screen, dashboard, sound)
     print("setting Print : ", level, screen, dashboard, sound)
+    print("voice Setting Print : ", target_word, threshold)
     clock = pygame.time.Clock()
     while not mario.restart:
         pygame.display.set_caption("Super Mario running with {:d} FPS".format(int(clock.get_fps())))
@@ -50,7 +62,7 @@ def main(audio_queue):
             mario.update()
         if not audio_queue.empty():
             data = audio_queue.get()
-            print(data)
+            print(recorder(data))
         pygame.display.update()
         clock.tick(max_frame_rate)
     return 'restart'
