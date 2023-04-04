@@ -1,8 +1,8 @@
-scipy
 numpy
-resampy
-panphon
-torch
-editdistance
-requests
-tqdm
+pygame
+pyaudio
+scipy
+jamo
+g2pk
+pydirectinput
+allosaurus

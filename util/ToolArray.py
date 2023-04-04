@@ -3,6 +3,8 @@ def Mic_device_detector(audio):
         desc = audio.get_device_info_by_index(index)
         device_list = []
         index_list = []
+        print("DEVICE: {device}, INDEX: {index}".format(
+            device=desc['name'], index=index))
         if "마이크" in desc['name'] or "mic" in desc['name']:
             device_list.append(desc['name'])
             index_list.append(index)

@@ -3,7 +3,7 @@ import pyaudio
 from util.IPATool import korean_to_ipa
 from util.ToolArray import Mic_device_detector
 class PhoneRecognition:
-    def __init__(self, model, audio, format=pyaudio.paInt16, channels=1, rate=16000, frames_per_buffer=2048):
+    def __init__(self, model, audio, format=pyaudio.paInt16, channels=1, rate=16000, frames_per_buffer=3000):
         self.model = model
         self.audio = audio
         self.format = format
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     format = pyaudio.paInt16
     channels = 1
     rate = 16000
-    frames_per_buffer = 1024
+    frames_per_buffer = 3000
     device_list, index_list = Mic_device_detector(audio)
     stream = audio.open(format=format, channels=channels, rate=rate, input=True,
                                   frames_per_buffer=frames_per_buffer, input_device_index=0)
