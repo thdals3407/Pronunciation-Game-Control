@@ -24,12 +24,12 @@ class startUI(QDialog):
         self.startButton.clicked.connect(self.save_text_values)
 
     def save_text_values(self):
-        name_text = self.name_box.text()
-        id_text = self.id_box.text()
-        word_text = self.word_box.text()
-        threshold_value = self.threshold_box.value()
-        audio_text = self.audio_box.currentText()
-        print(f"Name: {name_text}, ID: {id_text}, Word: {word_text}, Threshold: {threshold_value}, Audio: {audio_text}")
+        self.name_text = self.name_box.text()
+        self.id_text = self.id_box.text()
+        self.word_text = self.word_box.text()
+        self.threshold_value = self.threshold_box.value()
+        self.audio_text = self.audio_box.currentText()
+        print(f"Name: {self.name_text}, ID: {self.id_text}, Word: {self.word_text}, Threshold: {self.threshold_value}, Audio: {self.audio_text}")
 
 
 

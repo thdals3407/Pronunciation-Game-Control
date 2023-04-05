@@ -16,14 +16,29 @@ from util.ToolArray import Mic_device_detector
 
 windowSize = 640, 480
 
+
+
+
+
+
+
 # UI Setting Paramter
 user_name = ""
 userid = 0
 target_word = "mike"
-threshold = 0.15
+threshold = 0.17
 audio = pyaudio.PyAudio()
 device_list, index_list = Mic_device_detector(audio)
 device_index = 1
+
+
+
+
+
+
+
+
+
 
 audio_queue = Queue()
 
@@ -42,8 +57,8 @@ phoneRecognition = PhoneRecognition(model, audio, format=pyaudio.paInt16, channe
 phoneRecognition.set_topK(5)
 phoneRecognition.set_emit(1)
 
-gop = GoPScoring(target_word)
-dpra = DPRA(threshold)
+gop = GoPScoring(target_word, lang = "eng")
+dpra = DPRA(threshold, focus_variable = 0.1)
 
 def get_audio(audio_queue):
     frames = bytearray()
@@ -56,20 +71,21 @@ def get_audio(audio_queue):
             if len(cur_ipa) > 0:
                 score = gop.GoP_Score1(cur_ipa)
                 print(score)
-                if score > threshold:   # Score이 Threshold보다 커지는지 확인하는 코드
-                    frames = bytearray()    #
+                if dpra.InputScore(score):   # Score이 Threshold보다 커지는지 확인하는 코드
                     print("ket Input")
                     pydirectinput.press(["1"])
+                    frames = bytearray()
+                    dpra.addGoP(score)
                 elif len(frames) > rate * 2:  # 3초 이상 데이터를 쌓아두지 않도록 초기화 작업
+                    dpra.addGoP(score)
                     frames = bytearray()
             elif len(frames) > rate * 2:  # 3초 이상 데이터를 쌓아두지 않도록 초기화 작업
                 frames = bytearray()
 
-
-
             if not audio_queue.empty(): # Loop out Control
                 loop = audio_queue.get_nowait()
                 frames = bytearray()
+                dpra.Mgop_Scoring()
         if not audio_queue.empty(): # Loog in Control
             loop = audio_queue.get_nowait()
             frames = bytearray()
@@ -112,6 +128,10 @@ if __name__ == "__main__":
         print("Game Start")
         exitmessage = MarioPygameLoop()
         audio_queue.put(False)
+        time.sleep(3)
+        print("-----------------")
+        print(dpra.get_DPRA_feedback())
+        print("-----------------")
 
     pygame.quit()
     audio.terminate()

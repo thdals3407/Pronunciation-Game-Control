@@ -189,8 +189,10 @@ def split_into_phonemes(korean_string):
 
 def english_to_ipa(target_word):
     if target_word == 'mike':
+        print(target_word, " >> ", "maɪk")
         return "maɪk"
     elif target_word == 'test':
+        print(target_word, " >> ", 'test')
         return "tɛst"
     else:
         return "abi"
