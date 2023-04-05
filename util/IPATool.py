@@ -187,6 +187,14 @@ def split_into_phonemes(korean_string):
             split_string += char
     return split_string
 
+def english_to_ipa(target_word):
+    if target_word == 'mike':
+        return "maɪk"
+    elif target_word == 'test':
+        return "tɛst"
+    else:
+        return "abi"
+
 if __name__ == '__main__':
     #test_code()
     #recorder = AudioRecorder()

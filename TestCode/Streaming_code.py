@@ -47,7 +47,6 @@ class Pstreaming:
         waveFile.setframerate(self.rate)
         waveFile.writeframes(b''.join(self.frames))
         waveFile.close()
-        Stt_ipa("AudioSample/output.wav")
 
     def record(self, duration):
         for i in range(int(self.rate / self.frames_per_buffer * duration)):

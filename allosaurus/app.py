@@ -106,9 +106,8 @@ class Recognizer:
         # print("Check_wf_nframes", self.nframes)
         # print("Check_wf_sampwidth", self.sampwidth)
         # set wav header
-        audio.set_header(sample_rate=self.framerate, sample_size=self.nframes, channel_number=1,
+        audio.set_header(sample_rate=self.framerate, sample_size=len(data), channel_number=1,
                          sample_width=self.sampwidth)
-
         # set audio
         if not header_only:
             # print("Check_wf_x", len(data))
