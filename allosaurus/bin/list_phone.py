@@ -6,7 +6,7 @@ import argparse
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser('List language phone inventory')
-    parser.add_argument('-l', '--lang', type=str,  default='eng',         help='specify which language inventory to use for recognition. default "ipa" is to use all phone inventory')
+    parser.add_argument('-l', '--lang', type=str,  default='kor',         help='specify which language inventory to use for recognition. default "ipa" is to use all phone inventory')
     parser.add_argument('-m', '--model', type=str, default='latest',     help='specify which model inventory')
     parser.add_argument('-a', '--approximate', type=bool, default=False, help='the phone inventory can still hardly to cover all phones. You can use turn on this flag to map missing phones to other similar phones to recognize. The similarity is measured with phonological features')
 

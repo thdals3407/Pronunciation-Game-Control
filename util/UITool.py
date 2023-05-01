@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
+import matplotlib.pyplot as mlt
 
 class startUI(QDialog):
     def __init__(self, ui_path, audioList, threshold):
@@ -45,14 +46,29 @@ class startUI(QDialog):
     def get_audioDevice(self):
         return self.audio_text
 
+class scoreUI(QDialog):
+    def __init__(self, ui_path, scoring):
+        super().__init__()
+
+        # Load the UI
+        loadUi(ui_path, self)
+
+        self.feedbackText = self.findChild(QTextEdit, "textEdit")
+        self.feedbackText.setText(self.score_to_string(scoring))
+
+    def score_to_string(self, scoring):
+        threshold_list = scoring[0]
+        gop_list = scoring[1]
+
+        return ""
 if __name__ == '__main__':
     import pyaudio
     from ToolArray import Mic_device_detector
     audio = pyaudio.PyAudio()
     d_list, index_list = Mic_device_detector(audio)
     app = QApplication([])
-    StartUI = startUI(d_list, 0.12)
+    StartUI = scoreUI("ScoreUI.ui", "")
     StartUI.show()
     app.exec_()
 
-    print(StartUI.get_audioDevice())
+    #print(StartUI.get_audioDevice())

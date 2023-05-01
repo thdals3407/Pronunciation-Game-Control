@@ -195,7 +195,97 @@ def english_to_ipa(target_word):
         print(target_word, " >> ", 'test')
         return "tɛst"
     else:
-        return "abi"
+        print(target_word, " >> ", english_to_ipa_Tmp(target_word))
+        return english_to_ipa_Tmp(target_word)
+
+
+def english_to_ipa_Tmp(word):
+    ipa_dict = {
+        'a': 'a',
+        'aa': 'aː',
+        'b': 'b',
+        'd': 'd',
+        'dd': 'd̠',
+        'e': 'e',
+        'ee': 'eː',
+        'er': 'ɜː',
+        'f': 'f',
+        'h': 'h',
+        'i': 'ɪ',
+        'ii': 'iː',
+        'j': 'j',
+        'k': 'k',
+        'kh': 'kʰ',
+        'l': 'l',
+        'm': 'm',
+        'n': 'n',
+        'o': 'ɒ',
+        'oo': 'ɔː',
+        'p': 'p',
+        'ph': 'pʰ',
+        'r': 'r',
+        's': 's',
+        't': 't',
+        'th': 'θ',
+        'tt': 't̠',
+        'u': 'ʊ',
+        'uu': 'uː',
+        'v': 'v',
+        'w': 'w',
+        'x': 'ks',
+        'z': 'z',
+        'ae': 'æ',
+        'dh': 'ð',
+        'oe': 'øː',
+        'ng': 'ŋ',
+        'a:': 'aː',
+        'a*': 'ɑ',
+        'a:*': 'ɑː',
+        'o:': 'oː',
+        'o*': 'ɔ',
+        'e:': 'eː',
+        'e*': 'ɛ',
+        'eu:': 'ɵː',
+        'g': 'ɡ',
+        'i:': 'iː',
+        'j*': 'ɪ̯',
+        'u:': 'uː',
+        'r*': 'ɻ',
+        'sh': 'ʃ',
+        'u*': 'ʉ',
+        'ae*': 'ə',
+        'e:*': 'ɜː',
+        'i:*': 'ɪ',
+        'u:*': 'ʊ',
+        'uu*': 'ʉː',
+        'w*': 'ʍ',
+        'zh': 'ʒ',
+        'q': 'ʔ',
+        'th*': 'ð',
+    }
+    # 단어의 첫 문자가 대문자인 경우에 대한 처리
+    if word[0].isupper():
+        word = word.lower()
+        first_upper = True
+    else:
+        first_upper = False
+
+    # 각 알파벳에 대응되는 IPA 기호로 변환
+    ipa_word = ""
+    for i in range(len(word)):
+        if i < len(word) - 1:
+            if word[i:i + 2] in ipa_dict:
+                ipa_word += ipa_dict[word[i:i + 2]]
+            elif word[i] in ipa_dict:
+                ipa_word += ipa_dict[word[i]]
+            else:
+                ipa_word += word[i]
+        else:
+            if word[i] in ipa_dict:
+                ipa_word += ipa_dict[word[i]]
+            else:
+                ipa_word += word[i]
+    return ipa_word
 
 if __name__ == '__main__':
     #test_code()
@@ -207,4 +297,5 @@ if __name__ == '__main__':
     #recorder.streaming_start(model)
     #recorder.gop_streaming_start(model, "가")
 
-    print(korean_to_ipa("일요일"))
+    #print(korean_to_ipa("일요일"))
+    print(english_to_ipa("simple"))

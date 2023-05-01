@@ -26,8 +26,8 @@ class GoPScoring:
                 if self.target_ipa[i] in tmp_ipa:
                     tmp_ipa = input_ipa[input_ipa.find(self.target_ipa[i]):]
                     score += float(tmp_ipa[tmp_ipa.find("(") + 1:tmp_ipa.find(")")])
-        #print(input_ipa.count("|") + 1, " | ", score / len(self.target_ipa))
-        if len(self.target_ipa) < input_ipa.count("|") + 1:
-            return (score / len(self.target_ipa)) / (input_ipa.count("|") + 1 - len(self.target_ipa))
-        else:
-            return (score / len(self.target_ipa))
+        # print(input_ipa.count("|") + 1, " | ", score / len(self.target_ipa))
+        # if len(self.target_ipa) < input_ipa.count("|") + 1:
+        #     return (score / len(self.target_ipa)) / (input_ipa.count("|") + 1 - len(self.target_ipa))
+        # else:
+        return (score / len(self.target_ipa))
