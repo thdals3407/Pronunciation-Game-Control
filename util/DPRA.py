@@ -11,14 +11,15 @@ class DPRA:
         self.threshold_list = []
         self.target_acc = target_acc
         self.r = focus_variable
-        self.outputString = ""
         self.userid = userid
         self.outputString = "User id : {} \n\n".format(self.userid) # Reporter 구분용 코드
-        self.threshold_list.append(threshold)
+        #self.threshold_list.append(threshold)
     def Initialize(self):
         self.gop_list = []
         self.pass_list = []
         self.score_array = np.array([])
+        self.threshold_list = []
+        self.scoring_list = []
     def set_Thread(self, threshold):
         self.threshold = threshold
     def set_outputKeySetting(self, keyString):
@@ -29,7 +30,7 @@ class DPRA:
         return self.threshold
     def get_outputKeySetting(self):
         return self.outputKeySetting
-    def InputScore(self, score):  # Threshold보다 값이 크면 키가 입력되도록 설정하는 코드
+    def InputScore(self, score):  # Threshold보다 값이 크면 키가 입력되도록 설정하s는 코드
         return score > self.threshold
     def addGoP(self, FinalGop):
         self.gop_list.append(FinalGop)
@@ -55,12 +56,11 @@ class DPRA:
         self.outputString += "정확도    :  {} % \n".format(accuruacy)
 
     def Mgop_Scoring(self): # 최종적으로 Threasold를 업데이트 시키는 함수
-        self.scoring_list.append(self.gop_list)
         self.score_array = np.array(self.gop_list)
         if len(self.score_array) > 0:
             self.score_acc = self.accuracy_caculater()
-            self.outputString_Scoring(self.score_array)
-            self.outputString_TotalScoring(int(np.mean(self.score_array)*100), int(self.score_acc * 100))
+            #self.outputString_Scoring(self.score_array)
+            #self.outputString_TotalScoring(int(np.mean(self.score_array)*100), int(self.score_acc * 100))
             print(self.score_array)
             print("평균 점수    :", int(np.mean(self.score_array) * 100))
             print("정확도  :", int(self.score_acc * 100))
@@ -69,18 +69,18 @@ class DPRA:
     def update_Threshold(self, acc):
         if len(self.gop_list) > 0:
             self.threshold -= self.r * (self.target_acc - acc)
-            self.outputString_Threshold(self.threshold + self.r * (self.target_acc - acc), self.threshold)
-            print("update Thershold :", self.threshold + self.r * (self.target_acc - acc), " >> ", self.threshold)
+            #self.outputString_Threshold(self.threshold + self.r * (self.target_acc - acc), self.threshold)
+            print("Update Thershold :", self.threshold + self.r * (self.target_acc - acc), " >> ", self.threshold)
             self.threshold_list.append(self.threshold)
+            self.scoring_list.append(self.gop_list)
         else:
             print("There isn't any data of user score")
-            self.outputString += "There isn't any data of user score"
-            self.outputString = "check"
 
     def get_Report(self):
-        return self.outputString
-        #self.scoring_list.append(self.gop_list)
-        #output = []
-        #output.append(self.threshold_list)
-        #output.append(self.scoring_list)
-        #return output
+        #return self.outputString
+        self.scoring_list.append(self.gop_list)
+        self.threshold_list.append(self.threshold)
+        output = []
+        output.append(self.threshold_list)
+        output.append(self.scoring_list)
+        return output

@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Pronunciation Test Setting</string>
+    <string>발음 교정 게임 설정</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -39,7 +39,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Name :</string>
+    <string>이름 :</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -91,7 +91,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Target word :</string>
+    <string>학습 단어 :</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -117,7 +117,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Threshold :</string>
+    <string>목표 점수 : </string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -133,7 +133,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Audio device:</string>
+    <string>마이크 설정 :</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -161,11 +161,14 @@
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
+   <property name="decimals">
+    <number>0</number>
+   </property>
    <property name="singleStep">
-    <double>0.010000000000000</double>
+    <double>1.000000000000000</double>
    </property>
    <property name="value">
-    <double>0.300000000000000</double>
+    <double>15.000000000000000</double>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
@@ -178,7 +181,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Start</string>
+    <string>시작</string>
    </property>
   </widget>
  </widget>

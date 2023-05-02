@@ -1,7 +1,15 @@
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
-import matplotlib.pyplot as mlt
+#import matplotlib.pyplot as mlt
+#from pyqtgraph import PlotWidget, plot
+#import pyqtgraph as pg
 import numpy as np
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+
+
 class startUI(QDialog):
     def __init__(self, ui_path, audioList, threshold):
         super().__init__()
@@ -47,34 +55,77 @@ class startUI(QDialog):
         return self.audio_text
 
 class scoreUI(QDialog):
-    def __init__(self, ui_path, report, username):
+    def __init__(self, ui_path, scoring, username):
         super().__init__()
 
         # Load the UI
         loadUi(ui_path, self)
 
+        # Report the UI
         self.feedbackText = self.findChild(QTextEdit, "textEdit")
-        print(report)
-        self.feedbackText.setText(report)
+        print(scoring)
+        self.feedbackText.setText(self.score_to_string(scoring, username))
 
-    #def score_to_string(self, scoring, username):
-        #reporter = "이름 :" + username + "\n"
-        #threshold_array = np.array(scoring[0])
-        #gop_array = np.array(scoring[1])
-        #for i in range(len(gop_array)):
-            #reporter += "각 발음별 점수      : \n"
-            #for j in range(len(gop_array[i])):
-                #self.outputString += f"{j + 1} 회:" + str(int(gop_array[i][j] * 100)) + "점\n"
-            #reporter += "난이도 변경 :  {}  >>  {} \n".format(threshold_array[j], threshold_array[j+1])
-            #reporter += "--------------------"
-        #return str(threshold_array) + str(gop_array)
+        # for draw graph
+        self.fig = plt.Figure()
+        self.canvas = FigureCanvas(self.fig)
+        self.graph_verticalLayout.addWidget(self.canvas)
+
+        y1, y2 = self.get_paramter_setting(scoring)
+        x = np.arange(1, len(y1)+1)
+        ax = self.fig.add_subplot(111)
+        ax.plot(x, y1)
+        ax.plot(x, y2)
+        #ax.xticks(x)
+        #ax.set_xlabel("회차")
+        #ax.set_xlabel("점수")
+
+        #ax.set_title(username + " 점수 분석표")
+        ax.legend()
+        self.canvas.draw()
+
+
+    def score_to_string(self, scoring, username):
+        reporter = "이름 :" + username + "\n\n"
+        threshold_array = scoring[0]
+        gop_array = scoring[1]
+        for i in range(len(gop_array)):
+            reporter += "각 발음별 점수      : \n"
+            for j in range(len(gop_array[i])):
+                reporter += f"        {j + 1} 회:" + str(int(gop_array[i][j] * 100)) + "점\n"
+            print("error check: ",i, len(gop_array)-1)
+            if i < len(threshold_array)-1:
+                reporter += "\n평균: {} , 정확도: {} % \n".format(int(sum(gop_array[i]) / len(gop_array[i]) * 100),
+                                                                self.get_acc(gop_array[i], threshold_array[i]))
+                reporter += "난이도 변경 :  {}  >>  {} \n".format(int(threshold_array[i]*100), int(threshold_array[i+1]*100))
+                reporter += "--------------------\n"
+        return reporter
+    def get_acc(self, gop_array, threshold):
+        overcheck = 0
+        for i in gop_array:
+            if i >= threshold:
+                overcheck += 1
+
+        return int(overcheck / len(gop_array) * 100)
+
+    def get_paramter_setting(self, scoring):
+        y1 = []
+        y2 = []
+        threshold_array = scoring[0]
+        gop_array = scoring[1]
+        for i in range(len(gop_array)):
+            for j in range(len(gop_array[i])):
+                y1.append(gop_array[i][j])
+                y2.append(threshold_array[i])
+        return np.array(y1) * 100, np.array(y2) * 100
+
 if __name__ == '__main__':
     import pyaudio
     from ToolArray import Mic_device_detector
     audio = pyaudio.PyAudio()
     d_list, index_list = Mic_device_detector(audio)
     app = QApplication([])
-    StartUI = scoreUI("ScoreUI.ui", "")
+    StartUI = scoreUI("ScoreUI.ui", "test")
     StartUI.show()
     app.exec_()
 

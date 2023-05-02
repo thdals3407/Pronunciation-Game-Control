@@ -60,7 +60,7 @@ def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, 
     phoneRecognition.set_emit(1)
 
     gop = GoPScoring(target_word, lang="kor")
-    dpra = DPRA(threshold, focus_variable=0.1)
+    dpra = DPRA(threshold/100, focus_variable=0.1)
     dpra.set_userid(userid)
     #gop.set_target_word(target_word)
     #dpra.set_Thread(threshold)
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     user_name = ""
     userid = 0
     target_word = "마이크"
-    threshold = 0.15
+    threshold = 15
     audio = pyaudio.PyAudio()
     device_list, index_list = Mic_device_detector(audio)
     device_index = 1

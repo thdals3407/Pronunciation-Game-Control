@@ -201,7 +201,7 @@ def korean_to_ipa(hangul_string):
                 ipa_string += LIMITED_IPA_CONSONANTS[BASE_CONSONANTS_BOTTUM[final - 1]]
         elif char == " ":
             ipa_string += char
-    #print(hangul_string, " -->", g2p(hangul_string), " --> ", ipa_string)
+    print(hangul_string, " -->", g2p(hangul_string), " --> ", ipa_string)
     return ipa_string
 
 
