@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
 import matplotlib.pyplot as mlt
-
+import numpy as np
 class startUI(QDialog):
     def __init__(self, ui_path, audioList, threshold):
         super().__init__()
@@ -47,20 +47,27 @@ class startUI(QDialog):
         return self.audio_text
 
 class scoreUI(QDialog):
-    def __init__(self, ui_path, scoring):
+    def __init__(self, ui_path, report, username):
         super().__init__()
 
         # Load the UI
         loadUi(ui_path, self)
 
         self.feedbackText = self.findChild(QTextEdit, "textEdit")
-        self.feedbackText.setText(self.score_to_string(scoring))
+        print(report)
+        self.feedbackText.setText(report)
 
-    def score_to_string(self, scoring):
-        threshold_list = scoring[0]
-        gop_list = scoring[1]
-
-        return ""
+    #def score_to_string(self, scoring, username):
+        #reporter = "이름 :" + username + "\n"
+        #threshold_array = np.array(scoring[0])
+        #gop_array = np.array(scoring[1])
+        #for i in range(len(gop_array)):
+            #reporter += "각 발음별 점수      : \n"
+            #for j in range(len(gop_array[i])):
+                #self.outputString += f"{j + 1} 회:" + str(int(gop_array[i][j] * 100)) + "점\n"
+            #reporter += "난이도 변경 :  {}  >>  {} \n".format(threshold_array[j], threshold_array[j+1])
+            #reporter += "--------------------"
+        #return str(threshold_array) + str(gop_array)
 if __name__ == '__main__':
     import pyaudio
     from ToolArray import Mic_device_detector

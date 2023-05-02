@@ -47,7 +47,7 @@ if __name__ == '__main__':
     device_list, index_list = Mic_device_detector(audio)
     stream = audio.open(format=format, channels=channels, rate=rate, input=True,
                                   frames_per_buffer=frames_per_buffer, input_device_index=1)
-    model = read_recognizer('eng2102')
+    model = read_recognizer('kor2023')
     phoneRecognition = PhoneRecognition(model, audio, format=pyaudio.paInt16, channels=channels, rate=rate, frames_per_buffer=frames_per_buffer, lang="eng")
     phoneRecognition.set_topK(1)
     phoneRecognition.set_emit(1)

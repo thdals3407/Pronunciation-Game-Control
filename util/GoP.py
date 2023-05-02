@@ -1,4 +1,4 @@
-from util.IPATool import korean_to_ipa, english_to_ipa
+from util.IPATool import korean_to_ipa#, english_to_ipa
 
 class GoPScoring:
     def __init__(self, target_word, lang = "kor"):
@@ -6,14 +6,14 @@ class GoPScoring:
         self.lang = lang
         if self.lang == "kor":
             self.target_ipa = korean_to_ipa(target_word)
-        else:
-            self.target_ipa = english_to_ipa(target_word)
+        #else:
+            #self.target_ipa = english_to_ipa(target_word)
     def set_target_word(self, target_word):
         self.target_word = target_word
         if self.lang == "kor":
             self.target_ipa = korean_to_ipa(target_word)
-        else:
-            self.target_ipa = english_to_ipa(target_word)
+        #else:
+            #self.target_ipa = english_to_ipa(target_word)
     def get_target_word(self):
         return self.target_word
     def get_target_ipa(self):

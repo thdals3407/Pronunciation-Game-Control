@@ -1,6 +1,6 @@
 from jamo import h2j, j2hcj
 from g2pk import G2p
-
+import re
 def ipa_to_korean(ipa_string):
     """
     IPA 문자열을 한국어로 변환합니다.
@@ -71,7 +71,8 @@ def ipa_to_korean(ipa_string):
         "ʃʰ": "ㅊ",
         "ʃˀ": "ㅆ",
         "ʌ": "어",
-        "ʔ": "ㅇ"
+        "ʔ": "ㅇ",
+        " ": " "
     }
     korean_string = ''
     ipa_words = ipa_string.split()
@@ -82,13 +83,8 @@ def ipa_to_korean(ipa_string):
             korean_string += char
     return korean_string
 
-
+"""
 def korean_to_ipa(korean_string):
-    """
-    한국어 문자열을 IPA로 변환합니다.
-    :param korean_string: 변환할 한국어 문자열입니다.
-    :return: IPA로 변환된 문자열입니다.
-    """
     g2p = G2p()
 
     korean_dict = {
@@ -116,20 +112,111 @@ def korean_to_ipa(korean_string):
         'ㅌ': 'tʰ',
         'ㅍ': 'pʰ',
         'ㅎ': 'h',
-        'ㅆ': 'ss'
+        'ㅆ': 'ss',
+        'ㅉ': 'jj',
+        ' ' :' '
     }
     korean_input = text_to_phone(g2p(korean_string))
     ipa_string = ''
     for char in korean_input:
-        if char in korean_dict:
-            ipa_string += korean_dict[char]
-        else:
-            ipa_string += char
+        for i in range(len(char)):
+            if i == 0:
+                print("초성", char[i])
+                ipa_string += korean_dict[char[i]]
+            elif i == len(char[i]) - 1:
+                print("종성", char[i])
+                ipa_string += korean_dict[char[i]]
+            else:
+                print("중성", char[i])
+                ipa_string += korean_dict[char[i]]
     print(korean_string, " -->", g2p(korean_string), " --> ", ipa_string)
     return ipa_string
+"""
+
+
+
+def korean_to_ipa(hangul_string):
+    # 한글 범위와 기본 자음, 모음 정의
+    HANGUL_RANGE = re.compile("[가-힣]")
+    BASE_CONSONANTS = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"
+    BASE_VOWELS = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ"
+    BASE_CONSONANTS_BOTTUM = "ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ"
+    # 제한된 IPA 기호를 사용하여 자음과 모음 매핑
+    LIMITED_IPA_CONSONANTS = {
+        'ㄱ': 'k',
+        'ㄲ': 'kʰ',
+        'ㄴ': 'n',
+        'ㄷ': 't',
+        'ㄸ': 'tʰ',
+        'ㄹ': 'l',
+        'ㅁ': 'm',
+        'ㅂ': 'p',
+        'ㅃ': 'pʰ',
+        'ㅅ': 's',
+        'ㅆ': 'sʰ',
+        'ㅇ': 'ŋ',
+        'ㅈ': 'tʃ',
+        'ㅉ': 'tʃʰ',
+        'ㅊ': 'tʃʰ',
+        'ㅋ': 'kʰ',
+        'ㅌ': 'tʰ',
+        'ㅍ': 'pʰ',
+        'ㅎ': 'h'
+    }
+    LIMITED_IPA_VOWELS = {
+        'ㅏ': 'a',
+        'ㅐ': 'æ',
+        'ㅑ': 'ja',
+        'ㅒ': 'jæ',
+        'ㅓ': 'ə',
+        'ㅔ': 'e',
+        'ㅕ': 'jə',
+        'ㅖ': 'je',
+        'ㅗ': 'o',
+        'ㅘ': 'wa',
+        'ㅙ': 'wæ',
+        'ㅚ': 'ø',
+        'ㅛ': 'jo',
+        'ㅜ': 'u',
+        'ㅝ': 'wə',
+        'ㅞ': 'we',
+        'ㅟ': 'y',
+        'ㅠ': 'ju',
+        'ㅡ': 'ɯ',
+        'ㅢ': 'ɯi',
+        'ㅣ': 'i'
+    }
+
+    ipa_string = ""
+    g2p = G2p()
+    for char in g2p(hangul_string):
+        if HANGUL_RANGE.match(char):
+            code = ord(char) - ord('가')
+            initial = code // 588
+            medial = (code % 588) // 28
+            final = code % 28
+            ipa_string += LIMITED_IPA_CONSONANTS[BASE_CONSONANTS[initial]]
+            ipa_string += LIMITED_IPA_VOWELS[BASE_VOWELS[medial]]
+            if final > 0:
+                ipa_string += LIMITED_IPA_CONSONANTS[BASE_CONSONANTS_BOTTUM[final - 1]]
+        elif char == " ":
+            ipa_string += char
+    #print(hangul_string, " -->", g2p(hangul_string), " --> ", ipa_string)
+    return ipa_string
+
+
+
+
+
+
+
+
 
 def text_to_phone(text):
-    return j2hcj(h2j(text))
+    list = []
+    for i in range(len(text)):
+        list.append(j2hcj(h2j(text[i])))
+    return list
 
 def split_into_phonemes(korean_string):
     """
@@ -187,106 +274,6 @@ def split_into_phonemes(korean_string):
             split_string += char
     return split_string
 
-def english_to_ipa(target_word):
-    if target_word == 'mike':
-        print(target_word, " >> ", "maɪk")
-        return "maɪk"
-    elif target_word == 'test':
-        print(target_word, " >> ", 'test')
-        return "tɛst"
-    else:
-        print(target_word, " >> ", english_to_ipa_Tmp(target_word))
-        return english_to_ipa_Tmp(target_word)
-
-
-def english_to_ipa_Tmp(word):
-    ipa_dict = {
-        'a': 'a',
-        'aa': 'aː',
-        'b': 'b',
-        'd': 'd',
-        'dd': 'd̠',
-        'e': 'e',
-        'ee': 'eː',
-        'er': 'ɜː',
-        'f': 'f',
-        'h': 'h',
-        'i': 'ɪ',
-        'ii': 'iː',
-        'j': 'j',
-        'k': 'k',
-        'kh': 'kʰ',
-        'l': 'l',
-        'm': 'm',
-        'n': 'n',
-        'o': 'ɒ',
-        'oo': 'ɔː',
-        'p': 'p',
-        'ph': 'pʰ',
-        'r': 'r',
-        's': 's',
-        't': 't',
-        'th': 'θ',
-        'tt': 't̠',
-        'u': 'ʊ',
-        'uu': 'uː',
-        'v': 'v',
-        'w': 'w',
-        'x': 'ks',
-        'z': 'z',
-        'ae': 'æ',
-        'dh': 'ð',
-        'oe': 'øː',
-        'ng': 'ŋ',
-        'a:': 'aː',
-        'a*': 'ɑ',
-        'a:*': 'ɑː',
-        'o:': 'oː',
-        'o*': 'ɔ',
-        'e:': 'eː',
-        'e*': 'ɛ',
-        'eu:': 'ɵː',
-        'g': 'ɡ',
-        'i:': 'iː',
-        'j*': 'ɪ̯',
-        'u:': 'uː',
-        'r*': 'ɻ',
-        'sh': 'ʃ',
-        'u*': 'ʉ',
-        'ae*': 'ə',
-        'e:*': 'ɜː',
-        'i:*': 'ɪ',
-        'u:*': 'ʊ',
-        'uu*': 'ʉː',
-        'w*': 'ʍ',
-        'zh': 'ʒ',
-        'q': 'ʔ',
-        'th*': 'ð',
-    }
-    # 단어의 첫 문자가 대문자인 경우에 대한 처리
-    if word[0].isupper():
-        word = word.lower()
-        first_upper = True
-    else:
-        first_upper = False
-
-    # 각 알파벳에 대응되는 IPA 기호로 변환
-    ipa_word = ""
-    for i in range(len(word)):
-        if i < len(word) - 1:
-            if word[i:i + 2] in ipa_dict:
-                ipa_word += ipa_dict[word[i:i + 2]]
-            elif word[i] in ipa_dict:
-                ipa_word += ipa_dict[word[i]]
-            else:
-                ipa_word += word[i]
-        else:
-            if word[i] in ipa_dict:
-                ipa_word += ipa_dict[word[i]]
-            else:
-                ipa_word += word[i]
-    return ipa_word
-
 if __name__ == '__main__':
     #test_code()
     #recorder = AudioRecorder()
@@ -297,5 +284,9 @@ if __name__ == '__main__':
     #recorder.streaming_start(model)
     #recorder.gop_streaming_start(model, "가")
 
-    #print(korean_to_ipa("일요일"))
-    print(english_to_ipa("simple"))
+    #print(korean_to_ipa("나는 지금 테스트를 하고 있습니다"))
+
+    #path = "C:/Users/sci/Desktop/KoreanDataset/train/wav/KsponSpeech_096789_1.wav"
+    #print(path[:path.index("wav")] + "text/" + path[-len("KsponSpeech_000000_0.wav"):-4] + '.txt')
+    #print(path[-12:-4])
+    print(korean_to_ipa("날이 맑은 날에는 밖에 나가서 놀고 싶어요"))

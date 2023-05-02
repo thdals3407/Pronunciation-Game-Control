@@ -37,10 +37,10 @@ def StartUI(threshold, device_list, index_list):
     app.exit()
     return user_name, userid, target_word, threshold, device_index
 
-def ScoreUI(feedback):
+def ScoreUI(feedback, user_name):
     app = QApplication([])
-    StartUI = scoreUI("util/ScoreUI.ui", feedback)
-    StartUI.show()
+    ScoreUI = scoreUI("util/ScoreUI.ui", feedback, user_name)
+    ScoreUI.show()
     app.exec_()
     app.exit()
 
@@ -171,6 +171,7 @@ def MarioPygameLoop():
     audio_queue.put(True)
     print("Speech process start")
     clock = pygame.time.Clock()
+    time.sleep(2)
     while not mario.restart:
         pygame.display.set_caption("Super Mario running with {:d} FPS".format(int(clock.get_fps())))
         if mario.pause:
@@ -204,7 +205,7 @@ if __name__ == "__main__":
         exitmessage = MarioPygameLoop()
         audio_queue.put(False)
         time.sleep(2)
-        ScoreUI(feedback_queue.get_nowait())
+        ScoreUI(feedback_queue.get_nowait(), user_name)
 
     pygame.quit()
     audio.terminate()
