@@ -58,7 +58,8 @@ def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, 
                                         frames_per_buffer=frames_per_buffer, lang="kor")
     phoneRecognition.set_topK(5)
     phoneRecognition.set_emit(1)
-
+    if target_word == "" or target_word == " ":
+        target_word = "테스트"
     gop = GoPScoring(target_word, lang="kor")
     dpra = DPRA(threshold/100, focus_variable=0.1)
     dpra.set_userid(userid)
@@ -148,6 +149,7 @@ def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, 
                 #print(dpra.get_Report())
                 feedback_queue.put(dpra.get_Report())
                 #print("-----------------------")
+                dpra.restart()
         if not audio_queue.empty(): # Loop in Control
             loop = audio_queue.get_nowait()
             frames = bytearray()
@@ -209,5 +211,5 @@ if __name__ == "__main__":
 
     pygame.quit()
     audio.terminate()
-    audio_process.kill()
+    #audio_process.kill()
     audio_process.join()
