@@ -86,7 +86,7 @@ def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, 
                 cur_ipa = phoneRecognition.get_ipa(frames)
                 if len(cur_ipa) > 0: # 음소 요소가 있음을 감지
                     score = gop.GoP_Score1(cur_ipa)
-                    print("User Score: ",score)
+                    print("User Score: ", score)
                     if press_check: # 이번 발화에서 버튼을 누를 필요가 있는가?
                         if dpra.InputScore(score):  # Score가 통과 기준이 되는가?
                             print("Pass")

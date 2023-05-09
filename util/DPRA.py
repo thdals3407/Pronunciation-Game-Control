@@ -13,7 +13,7 @@ class DPRA:
         self.r = focus_variable
         self.userid = userid
         self.outputString = "User id : {} \n\n".format(self.userid) # Reporter 구분용 코드
-        #self.threshold_list.append(threshold)
+        self.threshold_list.append(threshold)
     def Initialize(self):
         self.gop_list = []
         self.pass_list = []
