@@ -27,7 +27,7 @@ start_time = time.time()
 frame_count = 0
 while True:
     data = stream.read(CHUNK)
-    rms = audioop.rms(data, 2)  # RMS 값을 계산하여 소리 크기를 결정
+    rms = audioop.rms(data, 2)  # RMS 값을 계산하여 소리 크기를 결정p
     if rms > 2000:
         Check_text += "-"
     else:

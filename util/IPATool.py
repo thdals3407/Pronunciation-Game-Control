@@ -7,131 +7,62 @@ def ipa_to_korean(ipa_string):
     :param ipa_string: 변환할 IPA 문자열입니다.
     :return: 한국어로 변환된 문자열입니다.
     """
-    ipa_to_korean = {
-        "a": "ㅏ",
-        "aː": "ㅏ",
-        "b": "ㅂ",
-        "e": "ㅔ",
-        "eː": "ㅔ",
-        "e̞": "ㅔ",
-        "h": "ㅎ",
-        "i": "ㅣ",
-        "iː": "ㅣ",
-        "j": "ㅈ",
-        "k": "ㄱ",
-        "kʰ": "ㅋ",
-        "kˀ": "ㄲ",
-        "l": "ㄹ",
-        "lː": "ㄹ",
-        "m": "ㅁ",
-        "n": "ㄴ",
-        "n̪": "ㄴ",
-        "o": "ㅗ",
-        "oː": "ㅗ",
-        "p": "ㅍ",
-        "pʰ": "ㅍ",
-        "pˀ": "ㅃ",
-        "s": "ㅅ",
-        "sʰ": "ㅅ",
-        "sˀ": "ㅆ",
-        "s̪": "ㅅ",
-        "s̪ˀ": "ㅆ",
-        "t": "ㄷ",
-        "tʰ": "ㅌ",
-        "tˀ": "ㄸ",
-        "t̠": "ㄷ",
-        "t̪": "ㄷ",
-        "t̪ʰ": "ㅌ",
-        "t̪ˀ": "ㄸ",
-        "u": "ㅜ",
-        "uː": "ㅜ",
-        "w": "ㅇ",
-        "y": "ㅕ",
-        "æ": "애",
-        "æː": "애",
-        "ø": "ㅚ",
-        "ŋ": "ㅇ",
-        "ɐ": "어",
-        "ɕ": "시",
-        "ɕʰ": "ㅊ",
-        "ɘː": "어",
-        "əː": "어",
-        "ɛ": "에",
-        "ɛː": "에",
-        "ɛ̝": "에",
-        "ɤ": "어",
-        "ɤː": "어",
-        "ɤ̞": "어",
-        "ɨ": "이",
-        "ɪ": "이",
-        "ɯ": "우",
-        "ɯː": "우",
-        "ɾ": "ㄹ",
-        "ʃ": "ㅅ",
-        "ʃʰ": "ㅊ",
-        "ʃˀ": "ㅆ",
-        "ʌ": "어",
-        "ʔ": "ㅇ",
-        " ": " "
-    }
-    korean_string = ''
-    ipa_words = ipa_string.split()
-    for char in ipa_words:
-        if char in ipa_to_korean:
-            korean_string += ipa_to_korean[char]
-        else:
-            korean_string += char
-    return korean_string
-
-"""
-def korean_to_ipa(korean_string):
-    g2p = G2p()
-
-    korean_dict = {
-        'ㅏ': 'a',
-        'ㅑ': 'ya',
-        'ㅓ': 'ʌ',
-        'ㅕ': 'yʌ',
-        'ㅗ': 'o',
-        'ㅛ': 'yo',
-        'ㅜ': 'u',
-        'ㅠ': 'yu',
-        'ㅡ': 'ɯ',
-        'ㅣ': 'i',
-        'ㄱ': 'k̚',
+    LIMITED_IPA_CONSONANTS = {
+        'ㄱ': 'k',
+        'ㄲ': 'kʰ',
         'ㄴ': 'n',
-        'ㄷ': 't̚',
-        'ㄹ': 'ɾ',
+        'ㄷ': 't',
+        'ㄸ': 'tʰ',
+        'ㄹ': 'l',
         'ㅁ': 'm',
-        'ㅂ': 'p̚',
+        'ㅂ': 'p',
+        'ㅃ': 'pʰ',
         'ㅅ': 's',
+        'ㅆ': 'sʰ',
         'ㅇ': 'ŋ',
-        'ㅈ': 'tɕ̚',
-        'ㅊ': 'tɕʰ',
+        'ㅈ': 'tʃ',
+        'ㅉ': 'tʃʰ',
+        'ㅊ': 'tʃʰ',
         'ㅋ': 'kʰ',
         'ㅌ': 'tʰ',
         'ㅍ': 'pʰ',
-        'ㅎ': 'h',
-        'ㅆ': 'ss',
-        'ㅉ': 'jj',
-        ' ' :' '
+        'ㅎ': 'h'
     }
-    korean_input = text_to_phone(g2p(korean_string))
-    ipa_string = ''
-    for char in korean_input:
-        for i in range(len(char)):
-            if i == 0:
-                print("초성", char[i])
-                ipa_string += korean_dict[char[i]]
-            elif i == len(char[i]) - 1:
-                print("종성", char[i])
-                ipa_string += korean_dict[char[i]]
-            else:
-                print("중성", char[i])
-                ipa_string += korean_dict[char[i]]
-    print(korean_string, " -->", g2p(korean_string), " --> ", ipa_string)
-    return ipa_string
-"""
+    LIMITED_IPA_VOWELS = {
+        'ㅏ': 'a',
+        'ㅐ': 'æ',
+        'ㅑ': 'ja',
+        'ㅒ': 'jæ',
+        'ㅓ': 'ə',
+        'ㅔ': 'e',
+        'ㅕ': 'jə',
+        'ㅖ': 'je',
+        'ㅗ': 'o',
+        'ㅘ': 'wa',
+        'ㅙ': 'wæ',
+        'ㅚ': 'ø',
+        'ㅛ': 'jo',
+        'ㅜ': 'u',
+        'ㅝ': 'wə',
+        'ㅞ': 'we',
+        'ㅟ': 'y',
+        'ㅠ': 'ju',
+        'ㅡ': 'ɯ',
+        'ㅢ': 'ɯi',
+        'ㅣ': 'i'
+    }
+    LIMITED_KOREAN_CONSONANTS = {v: k for k, v in LIMITED_IPA_CONSONANTS.items()}
+    LIMITED_KOREAN_VOWELS = {v: k for k, v in LIMITED_IPA_VOWELS.items()}
+    korean_string = ''
+    #ipa_list = split_ipa(ipa_string)
+    for char in ipa_string:
+        if char in LIMITED_KOREAN_CONSONANTS:
+            korean_string += LIMITED_KOREAN_CONSONANTS[char]
+        elif char in LIMITED_KOREAN_VOWELS:
+            korean_string += LIMITED_KOREAN_VOWELS[char]
+        else:
+            korean_string += char
+    return korean_string
 
 
 
@@ -205,13 +136,6 @@ def korean_to_ipa(hangul_string):
     return ipa_string
 
 
-
-
-
-
-
-
-
 def text_to_phone(text):
     list = []
     for i in range(len(text)):
@@ -274,6 +198,36 @@ def split_into_phonemes(korean_string):
             split_string += char
     return split_string
 
+def get_highest_symbols(ipaInput):
+    highest_symbols = []
+    groups = ipaInput.split(" | ")
+    for group in groups:
+        values = group.split(" ")
+        symbol_value_pairs = [(values[i], float(values[i + 1][1:-1])) for i in range(0, len(values), 2)]
+        highest_symbol = max(symbol_value_pairs, key=lambda x: x[1])[0]
+        highest_symbols.append(highest_symbol)
+    return highest_symbols
+
+def split_ipa(input_string):
+    ipa_list = ['a', 'aː', 'b', 'e', 'eː', 'e̞', 'h', 'i', 'iː', 'j', 'k', 'kʰ', 'kˀ', 'l', 'lː', 'm', 'n', 'n̪', 'o',
+                'oː', 'p', 'pʰ', 'pˀ', 's', 'sʰ', 'sˀ', 's̪', 's̪ˀ', 't', 'tʰ', 'tˀ', 't̠', 't̪', 't̪ʰ', 't̪ˀ', 'u',
+                'uː', 'w', 'y', 'æ', 'æː', 'ø', 'ŋ', 'ɐ', 'ɕ', 'ɕʰ', 'ɘː', 'əː', 'ɛ', 'ɛː', 'ɛ̝', 'ɤ', 'ɤː', 'ɤ̞', 'ɨ',
+                'ɪ', 'ɯ', 'ɯː', 'ɾ', 'ʃ', 'ʃʰ', 'ʃˀ', 'ʌ', 'ʔ']
+    output = []
+    index = 0
+    while index < len(input_string):
+        found = False
+        for ipa in sorted(ipa_list, key=len, reverse=True):
+            if input_string.startswith(ipa, index):
+                output.append(ipa)
+                index += len(ipa)
+                found = True
+                break
+        if not found:
+            index += 1
+    return output
+
+
 if __name__ == '__main__':
     #test_code()
     #recorder = AudioRecorder()
@@ -289,4 +243,4 @@ if __name__ == '__main__':
     #path = "C:/Users/sci/Desktop/KoreanDataset/train/wav/KsponSpeech_096789_1.wav"
     #print(path[:path.index("wav")] + "text/" + path[-len("KsponSpeech_000000_0.wav"):-4] + '.txt')
     #print(path[-12:-4])
-    print(korean_to_ipa("날이 맑은 날에는 밖에 나가서 놀고 싶어요"))
+    print(ipa_to_korean(korean_to_ipa("마이크")))

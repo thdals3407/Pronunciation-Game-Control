@@ -20,7 +20,6 @@ audio_queue = Queue()
 feedback_queue = Queue()
 
 def StartUI(threshold, device_list, index_list):
-    app = QApplication([])
     StartUI = startUI("util/StartUI.ui", device_list, threshold)
     StartUI.show()
     app.exec_()
@@ -34,15 +33,12 @@ def StartUI(threshold, device_list, index_list):
     print(f"Name: {user_name}, ID: {userid}, Word: {target_word}, Threshold: {threshold}, Audio: {device_index}")
     print("-----------------------")
     #StartUI.close()
-    app.exit()
     return user_name, userid, target_word, threshold, device_index
 
-def ScoreUI(feedback, user_name):
-    app = QApplication([])
-    ScoreUI = scoreUI("util/ScoreUI.ui", feedback, user_name)
+def ScoreUI_set(ScoreUI, feedback):
+    ScoreUI.get_feedback_Scoring(feedback)
     ScoreUI.show()
     app.exec_()
-    app.exit()
 
 def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, userid):
     # Audio Setting
@@ -53,7 +49,7 @@ def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, 
     audio = pyaudio.PyAudio()
     device_list, index_list = Mic_device_detector(audio)
     # GoP Setting
-    model = read_recognizer('uni2005')
+    model = read_recognizer('kor2023')
     phoneRecognition = PhoneRecognition(model, audio, format=format_type, channels=channels, rate=rate,
                                         frames_per_buffer=frames_per_buffer, lang="kor")
     phoneRecognition.set_topK(5)
@@ -96,7 +92,7 @@ def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, 
                         top_frames = frames
                 if len(frames) > rate * 5:  # 5초 이상 데이터를 쌓이지 않도록 초기화
                     dpra.addGoP(score)  # 음성 정보 저장
-                    frame2wav([top_frames], "UserAudioClip/User_{}_phase{}_speech_{}.wav".format(userid, phase, label),
+                    frame2wav([top_frames], "UserAudioClip/E1_User_{}_phase{}_speech_{}.wav".format(userid, phase, label),
                               rate, audio, format_type, channels)
                     label += 1  # 데이터 저장
                     press_check = True
@@ -197,8 +193,10 @@ if __name__ == "__main__":
     audio = pyaudio.PyAudio()
     device_list, index_list = Mic_device_detector(audio)
     device_index = 1
-
+    app = QApplication([])
     user_name, userid, target_word, threshold, device_index = StartUI(threshold, device_list, index_list)
+    ScoreUI = scoreUI("util/ScoreUI.ui")
+    ScoreUI.get_userName(user_name)
     audio_process = Process(target=get_audio, args=(audio_queue, feedback_queue, target_word, threshold, device_index, userid, ))
     audio_process.start()
     exitmessage = 'restart'
@@ -207,8 +205,11 @@ if __name__ == "__main__":
         exitmessage = MarioPygameLoop()
         audio_queue.put(False)
         time.sleep(2)
-        ScoreUI(feedback_queue.get_nowait(), user_name)
-
+        if feedback_queue.empty():
+            ScoreUI_set(ScoreUI, "")
+        else:
+            ScoreUI_set(ScoreUI, feedback_queue.get_nowait())
+    app.exit()
     pygame.quit()
     audio.terminate()
     #audio_process.kill()

@@ -8,7 +8,7 @@ import time
 # load your model
 
 Thread_parameter = 0.5
-model = read_recognizer('latest')
+model = read_recognizer('korea2023')
 
 class Pstreaming:
     def __init__(self, model, target_word, threshold=0.5, filename='AudioSample/output.wav', format=pyaudio.paInt16, channels=1, rate=16000, frames_per_buffer=2048):
