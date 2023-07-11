@@ -23,7 +23,6 @@ def StartUI(threshold, device_list, index_list):
     StartUI = startUI("util/StartUI.ui", device_list, threshold)
     StartUI.show()
     app.exec_()
-
     user_name = StartUI.get_userName()
     userid = StartUI.get_userId()
     target_word = StartUI.get_targetWord()
@@ -61,7 +60,6 @@ def get_audio(audio_queue,feedback_queue, target_word, threshold, device_index, 
     dpra.set_userid(userid)
     #gop.set_target_word(target_word)
     #dpra.set_Thread(threshold)
-
     print("Mic device : ", device_list[index_list.index(device_index)])
     stream = audio.open(format=format_type, channels=channels, rate=rate, input=True,
                         frames_per_buffer=frames_per_buffer, input_device_index=device_index)

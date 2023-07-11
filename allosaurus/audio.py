@@ -34,7 +34,7 @@ def read_audio(filename, header_only=False, channel=0):
     # set audio
     if not header_only:
         x = wf.readframes(wf.getnframes())
-        print("Check_wf_x", len(x))
+        #Sprint("Check_wf_x", len(x))
         assert (channel_number <= 2)
 
         audio_bytes = np.frombuffer(x, dtype='int16')

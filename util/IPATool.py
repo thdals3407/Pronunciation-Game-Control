@@ -243,4 +243,4 @@ if __name__ == '__main__':
     #path = "C:/Users/sci/Desktop/KoreanDataset/train/wav/KsponSpeech_096789_1.wav"
     #print(path[:path.index("wav")] + "text/" + path[-len("KsponSpeech_000000_0.wav"):-4] + '.txt')
     #print(path[-12:-4])
-    print(ipa_to_korean(korean_to_ipa("마이크")))
+    print(korean_to_ipa("학교"))
