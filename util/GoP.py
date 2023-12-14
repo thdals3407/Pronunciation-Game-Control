@@ -33,3 +33,19 @@ class GoPScoring:
         #     return (score / len(self.target_ipa)) / (input_ipa.count("|") + 1 - len(self.target_ipa))
         # else:
         return (score / len(self.target_ipa))
+    
+    def GoP_Score2(self, input_ipa):
+        score = 0.0
+        tmp_ipa = input_ipa
+        userText= ""
+        for i in range(len(self.target_ipa)):
+            if self.target_ipa[i] != " ":
+                if self.target_ipa[i] in tmp_ipa:
+                    tmp_ipa = input_ipa[input_ipa.find(self.target_ipa[i]):]
+                    score += float(tmp_ipa[tmp_ipa.find("(") + 1:tmp_ipa.find(")")])
+                    userText += self.target_ipa[i]
+        # print(input_ipa.count("|") + 1, " | ", score / len(self.target_ipa))
+        # if len(self.target_ipa) < input_ipa.count("|") + 1:
+        #     return (score / len(self.target_ipa)) / (input_ipa.count("|") + 1 - len(self.target_ipa))
+        # else:
+        return (score / len(self.target_ipa))

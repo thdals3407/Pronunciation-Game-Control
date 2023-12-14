@@ -53,15 +53,32 @@ def ipa_to_korean(ipa_string):
     }
     LIMITED_KOREAN_CONSONANTS = {v: k for k, v in LIMITED_IPA_CONSONANTS.items()}
     LIMITED_KOREAN_VOWELS = {v: k for k, v in LIMITED_IPA_VOWELS.items()}
+    
     korean_string = ''
-    #ipa_list = split_ipa(ipa_string)
-    for char in ipa_string:
-        if char in LIMITED_KOREAN_CONSONANTS:
-            korean_string += LIMITED_KOREAN_CONSONANTS[char]
-        elif char in LIMITED_KOREAN_VOWELS:
-            korean_string += LIMITED_KOREAN_VOWELS[char]
-        else:
-            korean_string += char
+    i = 0
+    while i < len(ipa_string):
+        # 두 글자 조합 시도
+        if i + 1 < len(ipa_string):
+            two_char_combination = ipa_string[i:i+2]
+            if two_char_combination in LIMITED_KOREAN_CONSONANTS:
+                korean_string += LIMITED_KOREAN_CONSONANTS[two_char_combination]
+                i += 2
+                continue
+            elif two_char_combination in LIMITED_KOREAN_VOWELS:
+                korean_string += LIMITED_KOREAN_VOWELS[two_char_combination]
+                i += 2
+                continue
+
+        # 두 글자 조합이 없으면 한 글자만 변환
+        if ipa_string[i] in LIMITED_KOREAN_CONSONANTS:
+            korean_string += LIMITED_KOREAN_CONSONANTS[ipa_string[i]]
+        elif ipa_string[i] in LIMITED_KOREAN_VOWELS:
+            korean_string += LIMITED_KOREAN_VOWELS[ipa_string[i]]
+        #else:
+        #    korean_string += ipa_string[i]
+
+        i += 1
+
     return korean_string
 
 
@@ -199,13 +216,13 @@ def split_into_phonemes(korean_string):
     return split_string
 
 def get_highest_symbols(ipaInput):
-    highest_symbols = []
+    highest_symbols = ""
     groups = ipaInput.split(" | ")
     for group in groups:
         values = group.split(" ")
         symbol_value_pairs = [(values[i], float(values[i + 1][1:-1])) for i in range(0, len(values), 2)]
         highest_symbol = max(symbol_value_pairs, key=lambda x: x[1])[0]
-        highest_symbols.append(highest_symbol)
+        highest_symbols += highest_symbol
     return highest_symbols
 
 def split_ipa(input_string):
@@ -227,6 +244,71 @@ def split_ipa(input_string):
             index += 1
     return output
 
+def hangul_letter_combiner(choseong, jungseong, jongseong=None):
+    """
+    초성, 중성, 종성을 받아 한글 글자를 조합하는 함수입니다.
+    :param choseong: 한글 초성 (예: 'ㄱ', 'ㄴ')
+    :param jungseong: 한글 중성 (예: 'ㅏ', 'ㅣ')
+    :param jongseong: 한글 종성, 없는 경우 None (예: 'ㄱ', None)
+    :return: 조합된 한글 글자 (예: '가', '안')
+    """
+    # 한글 유니코드 시작점 및 초성, 중성, 종성의 기본 위치
+    HANGUL_START = 0xAC00
+    CHO_BASE = 588
+    JUNG_BASE = 28
+
+    # 한글 초성, 중성, 종성 리스트
+    choseongs = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+    jungseongs = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ']
+    jongseongs = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+
+    # 초성, 중성, 종성의 유니코드 인덱스 계산
+    unicode_index = HANGUL_START + (choseongs.index(choseong) * CHO_BASE) + (jungseongs.index(jungseong) * JUNG_BASE)
+
+    # 종성이 있는 경우 인덱스 추가
+    if jongseong is not None:
+        unicode_index += jongseongs.index(jongseong)
+
+    # 계산된 유니코드 인덱스로부터 한글 글자 생성
+    return chr(unicode_index)
+
+
+
+def string_to_hangul(input_string):
+    # 한글 초성, 중성, 종성 리스트
+    choseongs = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+    jungseongs = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ']
+    jongseongs = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+
+    result = ""
+    i = 0
+    while i < len(input_string):
+        choseong = jungseong = jongseong = None
+
+        # 초성 확인
+        if i < len(input_string) and input_string[i] in choseongs:
+            choseong = input_string[i]
+            i += 1
+        else:
+            choseong = 'ㅇ'  # 초성이 없는 경우 'ㅇ'으로 처리
+
+        # 중성 확인
+        if i < len(input_string) and input_string[i] in jungseongs:
+            jungseong = input_string[i]
+            i += 1
+
+        # 종성 확인 (다음 글자가 초성인 경우에만 종성으로 처리)
+        if i < len(input_string) and input_string[i] in jongseongs and (i + 1 == len(input_string) or input_string[i + 1] in choseongs):
+            jongseong = input_string[i]
+            i += 1
+
+        # 한글 글자 조합
+        if choseong and jungseong:
+            combined_letter = hangul_letter_combiner(choseong, jungseong, jongseong)
+            result += combined_letter
+
+    return result
+
 
 if __name__ == '__main__':
     #test_code()
@@ -243,4 +325,7 @@ if __name__ == '__main__':
     #path = "C:/Users/sci/Desktop/KoreanDataset/train/wav/KsponSpeech_096789_1.wav"
     #print(path[:path.index("wav")] + "text/" + path[-len("KsponSpeech_000000_0.wav"):-4] + '.txt')
     #print(path[-12:-4])
-    print(korean_to_ipa("학교"))
+    stringchecker = ipa_to_korean(korean_to_ipa("스마트폰"))
+
+    print("Result 1: ",stringchecker)
+    print("Result 2: ",string_to_hangul(stringchecker))

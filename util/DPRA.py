@@ -57,7 +57,8 @@ class DPRA:
     def outputString_TotalScoring(self, meanScoring, accuruacy):
         self.outputString +="--------------------"
         self.outputString += "평균: {} / 100, 정확도: {} \n".format(meanScoring, accuruacy)
-        self.outputString += "정확도    :  {} % \n".format(accuruacy)"""
+        self.outputString += "정확도    :  {} % \n".format(accuruacy)
+    """
 
     def Mgop_Scoring(self): # 최종적으로 Threasold를 업데이트 시키는 함수
         self.score_array = np.array(self.gop_list)

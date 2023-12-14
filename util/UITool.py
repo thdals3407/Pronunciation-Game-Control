@@ -69,6 +69,7 @@ class startUI_all(QDialog):
         self.threshold_box = self.findChild(QDoubleSpinBox, "doubleSpinBox")
         self.audio_box = self.findChild(QComboBox, 'comboBox')
         self.startButton= self.findChild(QPushButton, 'pushButton')
+        
         # Set the items of the combo box
         self.audio_box.addItems(audioList)
         self.threshold_box.setValue(threshold)
