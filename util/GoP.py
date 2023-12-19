@@ -5,13 +5,13 @@ class GoPScoring:
         self.target_word = target_word
         self.lang = lang
         if self.lang == "kor":
-            self.target_ipa = split_ipa(korean_to_ipa(target_word))
+            self.target_ipa = split_ipa(korean_to_ipa(target_word)[0])
         #else:
             #self.target_ipa = english_to_ipa(target_word)
     def set_target_word(self, target_word):
         self.target_word = target_word
         if self.lang == "kor":
-            self.target_ipa = split_ipa(korean_to_ipa(target_word))
+            self.target_ipa = split_ipa(korean_to_ipa(target_word)[0])
         #else:
             #self.target_ipa = english_to_ipa(target_word)
     def get_target_word(self):

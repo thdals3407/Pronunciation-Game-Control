@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>284</width>
+    <height>255</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,14 +16,14 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>20</y>
+     <x>50</x>
+     <y>30</y>
      <width>191</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>발음 교정 게임 설정</string>
+    <string>기본 설정 변경</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -32,9 +32,9 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>10</x>
      <y>60</y>
-     <width>61</width>
+     <width>81</width>
      <height>21</height>
     </rect>
    </property>
@@ -48,7 +48,7 @@
   <widget class="QLineEdit" name="nameText">
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>110</x>
      <y>60</y>
      <width>131</width>
      <height>21</height>
@@ -58,98 +58,49 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>10</x>
      <y>90</y>
      <width>81</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>학습 단어 :</string>
+    <string>목표 단어 :</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QLineEdit" name="wordText">
+  <widget class="QLineEdit" name="targetText">
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>110</x>
      <y>90</y>
      <width>131</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_6">
+  <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>200</y>
-     <width>91</width>
+     <x>10</x>
+     <y>120</y>
+     <width>81</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>마이크 설정 :</string>
+    <string>목표 점수 :</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboBox">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>200</y>
-     <width>131</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>240</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>시작</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_7">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>170</y>
-     <width>91</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>키 설정 :</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="keyBox">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>170</y>
-     <width>131</width>
-     <height>22</height>
-    </rect>
    </property>
   </widget>
   <widget class="QDoubleSpinBox" name="thresholdBox">
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>110</x>
      <y>120</y>
      <width>131</width>
      <height>22</height>
@@ -165,23 +116,46 @@
     <double>1.000000000000000</double>
    </property>
    <property name="value">
-    <double>40.000000000000000</double>
+    <double>15.000000000000000</double>
    </property>
   </widget>
-  <widget class="QLabel" name="label_5">
+  <widget class="QPushButton" name="confirmButton">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>120</y>
+     <x>100</x>
+     <y>200</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>완료</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>150</y>
      <width>81</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>목표 점수 : </string>
+    <string>키 설정:</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="keyBox">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>150</y>
+     <width>131</width>
+     <height>22</height>
+    </rect>
    </property>
   </widget>
  </widget>

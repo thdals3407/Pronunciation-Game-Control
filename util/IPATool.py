@@ -150,7 +150,7 @@ def korean_to_ipa(hangul_string):
         elif char == " ":
             ipa_string += char
     print(hangul_string, " -->", g2p(hangul_string), " --> ", ipa_string)
-    return ipa_string
+    return [ipa_string, g2p(hangul_string), ipa_string]
 
 
 def text_to_phone(text):

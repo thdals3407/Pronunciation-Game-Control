@@ -2,7 +2,8 @@ import pydirectinput
 import numpy as np
 from util.IPATool import ipa_to_korean, korean_to_ipa
 class DPRA:
-    def __init__(self, threshold=0.11, outputKeySetting = "1", target_acc=0.7, focus_variable=0.01, userid=0):
+    def __init__(self, threshold=0.11, outputKeySetting = "1", target_acc=0.6, focus_variable=0.01, userid=0):
+        self.updateTime = 2
         self.threshold = threshold
         self.outputKeySetting = outputKeySetting
         self.gop_list = []
@@ -39,14 +40,18 @@ class DPRA:
         self.gop_list.append(FinalGop)
         if FinalGop > self.threshold: #통과하는지 여부 체크용 함수
             self.pass_list.append(1)
+            if len(self.gop_list) >= self.updateTime:  # 10회 진행할 경우 DPRA가 적용되도록 설정
+                self.Mgop_Scoring()
+            return 1
         else:
             self.pass_list.append(0)
-        if len(self.gop_list) > 9:  # 10회 진행할 경우 DPRA가 적용되도록 설정
-            self.Mgop_Scoring()
+            if len(self.gop_list) >= self.updateTime:  # 10회 진행할 경우 DPRA가 적용되도록 설정
+                self.Mgop_Scoring()
+            return 0
     def accuracy_caculater(self):
         return sum(self.pass_list) / len(self.pass_list)
 
-    """
+    """ 
     def outputString_Scoring(self, score_array):
         self.outputString += "각 발음별 점수      : \n"
         for i in range(len(score_array)):
@@ -83,9 +88,13 @@ class DPRA:
 
     def get_Report(self):
         #return self.outputString
-        self.scoring_list.append(self.gop_list)
-        self.threshold_list.append(self.threshold)
-        output = []
-        output.append(self.threshold_list)
-        output.append(self.scoring_list)
-        return output
+        #self.scoring_list.append(self.gop_list)
+        #self.threshold_list.append(self.threshold)
+        #output = []
+        #output.append(self.threshold_list)
+        #output.append(self.scoring_list)
+        if len(self.gop_list) > 0:
+            return [self.threshold, self.gop_list[len(self.gop_list)-1]]
+        else:
+            return [[], []]
+        
